@@ -1,0 +1,50 @@
+#!/bin/bash
+if [[ $1 == "local" ]]
+then
+echo "Copie des sources locales"
+cp -rf "/home/mathieu/Documents/TRAVAIL/IPI/Projet/moteurIPI-01/" ./
+echo "Copie achevée"
+echo ""
+else
+echo "Téléchargement des sources"
+git clone https://github.com/Cypher-0/moteurIPI-01.git
+echo "Téléchargement réussi"
+echo ""
+fi
+
+echo "Suppression des fichiers dépassés"
+rm ./*.py*
+echo "Suppression réussie"
+echo ""
+
+echo "Copie des fichiers à jours à leur emplacement final"
+cp moteurIPI-01/*.py ./
+echo "Copie des fichiers à jours réussie"
+echo ""
+
+echo "Suppression du dossier créé ..."
+rm -rf moteurIPI-01/
+echo "Suppression réussie."
+echo ""
+
+echo "Suppression des fichiers ne correspondant pas à la lib"
+find . -name "[a-z]*.py*" -delete
+echo "Suppression réussie"
+echo ""
+
+echo "Création du fichier \"__init__.py\""
+touch __init__.py
+list=`ls [A-Z]*.py`
+array=($list)
+string="__all__ = ["
+for var in $list
+do
+	prov=$var
+	prov=${prov%?}
+	prov=${prov%?}
+	prov=${prov%?}
+	string=$string\"$prov\"","
+done
+string=${string%?}"]"
+echo $string >> __init__.py
+echo "Création réussie"
