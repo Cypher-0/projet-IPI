@@ -108,7 +108,7 @@ def movePlayerRight(lvl):
 
 	x = Object.getX(lvl["playerItem"])
 	if(x < Object.SCREEN_WIDTH-1):
-		Object.setX(lvl["playerItem"],x-1)
+		Object.setX(lvl["playerItem"],x+1)
 
 	return
 
@@ -122,6 +122,11 @@ def movePlayerDown(lvl):
 	@rtype: void
 	"""
 
+	assertLevel(lvl)
+
+	y = Object.getY(lvl["playerItem"])
+	if(y < Object.SCREEN_HEIGHT-1):
+		Object.setY(lvl["playerItem"],y+1)
 
 	return
 
@@ -135,6 +140,11 @@ def movePlayerUp(lvl):
 	@rtype: void
 	"""
 
+	assertLevel(lvl)
+
+	y = Object.getY(lvl["playerItem"])
+	if(y > 0):
+		Object.setY(lvl["playerItem"],y-1)
 
 	return
 
