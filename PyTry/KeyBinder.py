@@ -1,4 +1,6 @@
-﻿"""
+﻿
+
+"""
 File containing definition of type "KeyBinder" used to link a key and a function
 """
 #used to link keyboard event and functions

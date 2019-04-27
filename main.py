@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from PyTry import *
+import Level
+
 import time
 import sys
+import subprocess
 
-dt = 0.16
+dt = None
 
 kb_global = KeyBinder.KeyBinder("global")
 obj = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic"),0,0,[0,255,0],-5)
+prov = Level.Level("Levels/l0")
 
 keyboard_default = None
 
@@ -17,10 +21,11 @@ SCREEN_HEIGHT = 48
 def init():
 	global dt,keyboard_default,kb_global
 
-	Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
+	#Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
+	Tools.sysExec("python2.7 initTerm.py")
 
 	#dt = 0.016
-	dt = 0.08
+	dt = 0.04
 
 	keyboard_default = KeyBinder.initKbStgs()
 
@@ -43,19 +48,21 @@ def quit():
 
 def live():
 	global dt
-	Item.move(obj,dt)
+	Level.interact(prov)
+	KeyBinder.interact(kb_global)
 
 	return 
 
 def show():
-	global obj,SCREEN_WIDTH,SCREEN_HEIGHT
+	global SCREEN_WIDTH,SCREEN_HEIGHT
 
 	#on clear la console et on réinitialise le curseur
 	sys.stdout.write("\033[1;1H")
 	sys.stdout.write("\033[2J")
 
 	#affichage des different element
-	Object.show(obj)
+	#Object.show(obj)
+	Level.show(prov)
 
 	#deplacement curseur
 	sys.stdout.write("\033[0;0H\n")
@@ -74,8 +81,9 @@ def main():
 
 		live()
 		show()
+		KeyBinder.clearBuffer()
 		time.sleep(dt)
-		KeyBinder.interact(kb_global)
+		
 
 		i+=1
 
