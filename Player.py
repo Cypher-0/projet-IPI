@@ -6,12 +6,15 @@ from PyTry import *
 import Shot
 
 import time
+import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed"]
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
 #shotSpeed : float : player's shot speed on screen
+
+#life : int : player's life [0;100]
 
 """
 \"Player\" type attributes list
@@ -54,6 +57,28 @@ def Player(datas,x,y,fireTimeSpace):
 	object["shotSpeed"] = 30
 
 	return object
+
+def takeDamage(player,amount):
+	"""
+	Inflict \"amount\" damages to \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param amount: amount of damage to apply
+	@type amount: int
+
+	@return: -
+	@rtype: void
+	"""
+
+	assertPlayer(player)
+	assert type(amount) is int
+
+	player["life"] -= amount
+	if(player["life"] < 0):
+		player["life"] = 0
+
+	return
 
 
 ##########################
@@ -116,8 +141,10 @@ def show(player):
 	"""
 	assertPlayer(player)
 
+	sys.stdout.write("\033[1m")
 	for i in range(0,len(player["shotList"])):
 		Object.show(player["shotList"][i])
+	sys.stdout.write("\033[0m")
 
 	Object.show(player)
 
@@ -132,6 +159,7 @@ def show(player):
 
 def getfireTimeSpace(player):
 	"""
+	Get content of \"fireTimeSpace\" key from \"player\"
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
@@ -141,6 +169,19 @@ def getfireTimeSpace(player):
 	assertPlayer(player)
 
 	return player["fireTimeSpace"]
+
+def getLife(player):
+	"""
+	Get content of \"life\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: content of \"life\" key from \"player\"
+	@rtype: int
+	"""
+	assertPlayer(player)
+
+	return player["life"]
 
 
 
@@ -150,14 +191,42 @@ def getfireTimeSpace(player):
 #
 ##########################
 
-def getfireTimeSpace(player):
+def setfireTimeSpace(player,value):
 	"""
+	Get content of \"fireTimeSpace\" key from \"player\"
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
-	@return: content of \"fireTimeSpace\" key from \"player\"
-	@rtype: float
+	@param value: new value for the content of \"fireTimeSpace\" key from \"player\"
+	@type value: int
+
+	@return: -
+	@rtype: void
 	"""
 	assertPlayer(player)
+	assert type(value) is float or type(value) is int
+	value = float(value)
 
-	return player["fireTimeSpace"]
+	player["fireTimeSpace"] = value
+
+	return
+
+def setLife(player,value):
+	"""
+	Get content of \"life\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param value: new value for the content of \"life\" key from \"player\"
+	@type value: int
+
+	@return: -
+	@rtype: void
+	"""
+	assert type(value) is int
+	assert value >= 0 and value <= 1000,"Life out of range"
+	assertPlayer(player)
+
+	player["life"] = value
+
+	return
