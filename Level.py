@@ -3,17 +3,13 @@
 """File containing definition of a game Level """
 
 from PyTry import *
+import Player
+
 import os
 import time
 import sys
 
-
-
-
-dt = 0.08 #à chhanger
-
-
-
+dt = Object.dt
 
 attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList"] #+Item.attributesList
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
@@ -21,7 +17,7 @@ attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinde
 #bgItem1 : Item : background of the level (part 2)
 #fgItem1 : Item : foreGround of the level (part 2)
 
-#playerItem : Item : player avatar
+#playerItem : Player : player avatar
 #keyBinder : KeyBinder : keybinder of a level
 #enemyList : list of ? : list of all ennemys
 
@@ -30,7 +26,7 @@ attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinde
 @type: list
 """
 
-bgSpeed = -30
+fgSpeed = -50
 
 ##########################
 #
@@ -53,11 +49,13 @@ def Level(folder):
 	assert "background.pic" in lsFiles, "Load level from %r failed : missing file : background.pic" % folder
 	#assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % folder
 
-	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),0,0,[125,125,125],bgSpeed)
-	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),Item.getBaseWidth(bgItem0)+1,0,[125,125,125],bgSpeed)
-	fgItem0 =None# Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),0,0,[0,255,0],bgSpeed)
-	fgItem1 =None# Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),Item.getBaseWidth(fgItem0)+1,0,[0,255,0],bgSpeed)
-	playerItem = Item.Item(Tools.createDatasFromPic("Pictures/player.pic"),0,21,[255,0,0])
+	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),0,0,[70,70,70],fgSpeed-20)
+	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed-20)
+
+	fgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),0,0,[0,170,0],fgSpeed)
+	fgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),Item.getBaseWidth(fgItem0)-1,0,[0,170,0],fgSpeed)
+
+	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5)
 
 	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None}
 
@@ -108,17 +106,18 @@ def show(lvl):
 
 	assertLevel(lvl)
 
-	#Object.show(lvl["bgItem0"])
-	#Object.show(lvl["bgItem1"])
-	showBackground(lvl,lvl["bgItem0"])
-	showBackground(lvl,lvl["bgItem1"])
-	#Object.show(lvl["fgItem0"])
-	#Object.show(lvl["fgItem1"])
+	Object.show(lvl["bgItem0"])
+	Object.show(lvl["bgItem1"])
+	#showBackground(lvl,lvl["bgItem0"])
+	#showBackground(lvl,lvl["bgItem1"])
+	
+	Object.show(lvl["fgItem0"])
+	Object.show(lvl["fgItem1"])
 
 	#for a in lvl["enemyList"]:
 	#	Object.show(a)
 
-	Object.show(lvl["playerItem"])
+	Player.show(lvl["playerItem"])
 
 
 	return
@@ -139,16 +138,35 @@ def interact(lvl):
 
 	Item.move(lvl["bgItem0"],dt)
 	Item.move(lvl["bgItem1"],dt)
-	x = Object.getX(lvl["bgItem1"])
-	#place part 1 of the background after the part 2
-	if(x < 1 and x > 0):
-		Object.setX(lvl["bgItem0"],Item.getBaseWidth(lvl["bgItem0"])+1)
-	#place part 2 of the background after the part 1
-	x = Object.getX(lvl["bgItem0"])
-	if(x < 1 and x > 0):
-		Object.setX(lvl["bgItem1"],Item.getBaseWidth(lvl["bgItem1"])+1)
+	Item.move(lvl["fgItem0"],dt)
+	Item.move(lvl["fgItem1"],dt)
 
-	#Item.move(lvl["fgItem0"],dt)
+
+	x = Object.getX(lvl["bgItem1"])
+	baseWidth = Item.getBaseWidth(lvl["bgItem0"])
+	#place part 1 of the background after the part 0
+	if(x <= -baseWidth):
+		Object.setX(lvl["bgItem1"],baseWidth)
+
+	#place part 0 of the background after the part 1
+	x = Object.getX(lvl["bgItem0"])
+	if(x <= -baseWidth):
+		Object.setX(lvl["bgItem0"],baseWidth)
+
+
+
+	x = Object.getX(lvl["fgItem1"])
+	#place part 1 of the background after the part 2
+	if(x < 10):
+		Object.setX(lvl["fgItem0"],Item.getBaseWidth(lvl["fgItem0"])+1)
+	#place part 2 of the background after the part 1
+	x = Object.getX(lvl["fgItem0"])
+	if(x < 1 and x > 0):
+		Object.setX(lvl["fgItem1"],Item.getBaseWidth(lvl["fgItem1"]))
+
+
+
+	Player.interact(lvl["playerItem"])
 
 
 	return
@@ -166,7 +184,7 @@ def movePlayerLeft(lvl):
 	assertLevel(lvl)
 
 	x = Object.getX(lvl["playerItem"])
-	if(x > 0):
+	if(x > -10):
 		Object.setX(lvl["playerItem"],x-Item.getVX(lvl["playerItem"]))
 
 	return
@@ -184,7 +202,7 @@ def movePlayerRight(lvl):
 	assertLevel(lvl)
 
 	x = Object.getX(lvl["playerItem"])
-	if(x < Object.SCREEN_WIDTH-1):
+	if(x < Object.SCREEN_WIDTH-10):
 		Object.setX(lvl["playerItem"],x+Item.getVX(lvl["playerItem"]))
 
 	return
@@ -241,8 +259,8 @@ def showBackground(level,bg):
 	tempstr= ""
 	X = abs(Object.getX(bg))
 	for i in range(0,len(temp)): #on parcourt l'axe Y du tableau
-		tempstr+"".join(map(str,temp[int(X):int(Object.SCREEN_WIDTH-X)]))+"\n"
-		Tools.prDly(tempstr)
+		tempstr+="".join(map(str,temp[i][int(X):int(Object.SCREEN_WIDTH-X)]))+"\n"
+		#Tools.prDly(tempstr)
 	Tools.goAt(0,0)
 	sys.stdout.write(tempstr)
 

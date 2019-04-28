@@ -24,8 +24,8 @@ def init():
 	#Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
 	Tools.sysExec("python2.7 initTerm.py")
 
-	#dt = 0.016
-	dt = 0.04
+	dt = 0.05
+	#dt = 0.09
 
 	keyboard_default = KeyBinder.initKbStgs()
 
@@ -76,13 +76,18 @@ def main():
 
 	i = 0 #variable d'incrémentation de test
 
+	lastTime = 0
+
 	#70
 	while(i < 2500):
 
 		live()
-		show()
+		if(time.time()-lastTime > dt):
+			show()
+			lastTime = time.time()
+			#Tools.prDly("SALUT")
 		KeyBinder.clearBuffer()
-		time.sleep(dt)
+		time.sleep(Level.dt)
 		
 
 		i+=1

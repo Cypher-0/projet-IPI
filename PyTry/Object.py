@@ -26,6 +26,9 @@ SCREEN_WIDTH = 166
 SCREEN_HEIGHT = 48
 """Screen height in terms of characters used as reference in program"""
 
+dt = 0.03
+"""dt used for all calcs"""
+
 ##########################
 #
 #	Constructor
@@ -111,7 +114,7 @@ def show(object,showSpaces = False):#showSpaces allow user to print spaces in pl
 	@rtype: void
 	"""
 	assertObject(object) #PERFORMANCE  --> comment this line to increase performances (use carefully)
-	SCREEN_WIDTH,SCREEN_HEIGHT = Tools.getTerminalSize() #get terminal width and height
+	
 	X = object["x"]
 	Y = object["y"]
 	width = object["width"]
