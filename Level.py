@@ -4,6 +4,7 @@
 
 from PyTry import *
 import Player
+import HUD
 
 import os
 import time
@@ -11,7 +12,7 @@ import sys
 
 dt = Object.dt
 
-attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList"] #+Item.attributesList
+attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","HUD"] #+Item.attributesList
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
 #fgItem0 : Item : foreGround of the level (part 1)
 #bgItem1 : Item : background of the level (part 2)
@@ -52,15 +53,17 @@ def Level(folder,saveName):
 	assert "background.pic" in lsFiles, "Load level from %r failed : missing file : background.pic" % folder
 	#assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % folder
 
-	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),0,0,[70,70,70],fgSpeed-20)
-	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed-20)
+	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),0,0,[70,70,70],fgSpeed+30)
+	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed+30)
 
 	fgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),0,0,[0,170,0],fgSpeed)
 	fgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),Item.getBaseWidth(fgItem0)-1,0,[0,170,0],fgSpeed)
 
 	playerItem = loadPlayer(saveName)
 
-	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None}
+	hud = HUD.HUD(2000)
+
+	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None,"HUD":hud}
 
 	kb = KeyBinder.KeyBinder(folder[folder.rfind("/")+1:])
 	KeyBinder.addAction(kb,"z",movePlayerUp,object)
@@ -122,6 +125,7 @@ def show(lvl):
 
 	Player.show(lvl["playerItem"])
 
+	HUD.show(lvl["HUD"])
 
 	return
 
