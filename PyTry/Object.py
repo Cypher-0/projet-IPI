@@ -26,7 +26,7 @@ SCREEN_WIDTH = 166
 SCREEN_HEIGHT = 48
 """Screen height in terms of characters used as reference in program"""
 
-dt = 0.003
+dt = 0.03
 """dt used for all calcs"""
 
 ##########################

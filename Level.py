@@ -174,6 +174,10 @@ def interact(lvl):
 
 	Player.interact(lvl["playerItem"])
 
+	# ----------- Manage collisions
+	Item.tryCollide(lvl["fgItem0"],lvl["playerItem"])
+	Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])
+
 
 	return
 

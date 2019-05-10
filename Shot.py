@@ -66,7 +66,6 @@ def assertShot(shot):
 
 	return
 
-
 ##########################
 #
 #	Getters

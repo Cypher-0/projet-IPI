@@ -69,6 +69,40 @@ def move(item,dt): #procedure to define new position of the item
 	Object.setX(item,x)#x changes
 	Object.setY(item,y)#y changes
 
+def tryCollide(item1,item2):
+	"""
+	@param item1: Object of type "Item"
+	@type item1: dict
+
+	@param item2: Object of type "Item"
+	@type item2: dict
+
+	@return: Are item1 and item2 colliding ? Yes:True   No:False
+	@rtype: bool
+	"""
+
+	assertItem(item1)
+	assertItem(item2)
+
+	width1 = Object.getWidth(item1)
+	height1 = Object.getHeight(item1)
+
+	width2 = Object.getWidth(item2)
+	height2 = Object.getHeight(item2)
+
+	tempList = [item1,item2]
+
+	x1,y1 = Object.getX(item1),Object.getY(item1)
+	x2,y2 = Object.getX(item2),Object.getY(item2)
+
+	smallerIndex = 0 if width1*height1 < width2*height2 else 1 #search which item is the smaller
+
+	for i in range(0,Object.getWidth(tempList[smallerIndex])):
+		for j in range(0,Object.getHeight(tempList[smallerIndex])):
+			if(Object.getDataAt(item1,x1+i,y1+j) != '' and Object.getDataAt(item2,x2+i,y2+j) != ''): #if colliding
+				return True
+
+	return False
 
 ##########################
 #
