@@ -9,9 +9,11 @@ import subprocess
 
 dt = None
 
+saveName = "1"
+
 kb_global = KeyBinder.KeyBinder("global")
 obj = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic"),0,0,[0,255,0],-5)
-prov = Level.Level("Levels/l0")
+prov = Level.Level("Levels/l0",saveName)
 
 keyboard_default = None
 
@@ -79,7 +81,7 @@ def main():
 	lastTime = 0
 
 	#70
-	while(i < 2500):
+	while(i < 25000):
 
 		live()
 		if(time.time()-lastTime > dt):

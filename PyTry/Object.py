@@ -26,7 +26,7 @@ SCREEN_WIDTH = 166
 SCREEN_HEIGHT = 48
 """Screen height in terms of characters used as reference in program"""
 
-dt = 0.03
+dt = 0.003
 """dt used for all calcs"""
 
 ##########################
@@ -153,6 +153,7 @@ def show(object,showSpaces = False):#showSpaces allow user to print spaces in pl
 				if((data != ' ' and not(showSpaces))):
 					objectStr += '\033['+str(i+int(round(Y))+1)+';'+str(j+int(round(X))+1)+'H'  #+1 because terminal 0 is at [1,1]
 					objectStr += str(data)
+	objectStr += "\033[0m"
 
 	sys.stdout.write(objectStr)
 

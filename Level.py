@@ -34,11 +34,14 @@ fgSpeed = -50
 #
 ##########################
 
-def Level(folder):
+def Level(folder,saveName):
 	"""
 	\"Level\" type constructor
 	@param folder: Folder containing all informations about the level
 	@type folder: str
+
+	@param saveName: Path to save folder of current player
+	@type saveName: str
 
 	@return: Dictionnary containing all informations about level
 	@rtype: dict
@@ -55,7 +58,7 @@ def Level(folder):
 	fgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),0,0,[0,170,0],fgSpeed)
 	fgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),Item.getBaseWidth(fgItem0)-1,0,[0,170,0],fgSpeed)
 
-	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5)
+	playerItem = loadPlayer(saveName)
 
 	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None}
 
@@ -141,6 +144,7 @@ def interact(lvl):
 	Item.move(lvl["fgItem0"],dt)
 	Item.move(lvl["fgItem1"],dt)
 
+	# ------- Manage background and foreground
 
 	x = Object.getX(lvl["bgItem1"])
 	baseWidth = Item.getBaseWidth(lvl["bgItem0"])
@@ -156,13 +160,15 @@ def interact(lvl):
 
 
 	x = Object.getX(lvl["fgItem1"])
+	baseWidth = Item.getBaseWidth(lvl["fgItem0"])
 	#place part 1 of the background after the part 2
-	if(x < 10):
-		Object.setX(lvl["fgItem0"],Item.getBaseWidth(lvl["fgItem0"])+1)
+	if(x <= -baseWidth):
+		Object.setX(lvl["fgItem1"],baseWidth)
+
 	#place part 2 of the background after the part 1
 	x = Object.getX(lvl["fgItem0"])
-	if(x < 1 and x > 0):
-		Object.setX(lvl["fgItem1"],Item.getBaseWidth(lvl["fgItem1"]))
+	if(x <= -baseWidth):
+		Object.setX(lvl["fgItem0"],baseWidth)
 
 
 
@@ -170,6 +176,39 @@ def interact(lvl):
 
 
 	return
+
+def loadPlayer(saveName):
+	"""
+	Load player stats and image.
+	
+	@param saveName: Path to save folder of current player
+	@type saveName: str
+
+	@return: A dictionnary containing informations about one Player object
+	@rtype: dict
+	"""
+	assert type(saveName) is str
+
+	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5)
+	
+	file = open("Saves/"+saveName+"/player.stats","r")
+	content = file.read()
+	file.close()
+
+	tempDict = {"fireTimeSpace":0,"shotSpeed":0,"life":0}
+
+	lsLines = content.splitlines()
+	for i in range(0,len(lsLines)):
+		part1 = lsLines[i].split("=")[0]
+		part2 = lsLines[i].split("=")[1]
+		tempDict[part1] = float(part2)
+
+	Player.setFireTimeSpace(playerItem,tempDict["fireTimeSpace"])
+	Player.setShotSpeed(playerItem,tempDict["shotSpeed"])
+	Player.setLife(playerItem,tempDict["life"])
+
+
+	return playerItem
 
 def movePlayerLeft(lvl):
 	"""

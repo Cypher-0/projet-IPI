@@ -14,7 +14,9 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
 #shotSpeed : float : player's shot speed on screen
 
-#life : int : player's life [0;100]
+#life : float : player's life [0;100]
+#startBlink : float : time when player started blinking
+#blinkTime : float : player will blink during this time
 
 """
 \"Player\" type attributes list
@@ -54,7 +56,8 @@ def Player(datas,x,y,fireTimeSpace):
 	object["fireTimeSpace"] = fireTimeSpace
 	object["lastShot"] = 0
 	object["shotList"] = []
-	object["shotSpeed"] = 30
+	object["shotSpeed"] = 50
+	object["life"] = 100
 
 	return object
 
@@ -65,14 +68,14 @@ def takeDamage(player,amount):
 	@type player: dict
 
 	@param amount: amount of damage to apply
-	@type amount: int
+	@type amount: float
 
 	@return: -
 	@rtype: void
 	"""
 
 	assertPlayer(player)
-	assert type(amount) is int
+	assert type(amount) is int or type(amount) is float
 
 	player["life"] -= amount
 	if(player["life"] < 0):
@@ -144,7 +147,7 @@ def show(player):
 	sys.stdout.write("\033[1m")
 	for i in range(0,len(player["shotList"])):
 		Object.show(player["shotList"][i])
-	sys.stdout.write("\033[0m")
+	#sys.stdout.write("\033[0m")
 
 	Object.show(player)
 
@@ -170,6 +173,19 @@ def getfireTimeSpace(player):
 
 	return player["fireTimeSpace"]
 
+def getShotSpeed(player):
+	"""
+	Get content of \"shotSpeed\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+
+	return player["shotSpeed"]
+
 def getLife(player):
 	"""
 	Get content of \"life\" key from \"player\"
@@ -177,7 +193,7 @@ def getLife(player):
 	@type player: dict
 
 	@return: content of \"life\" key from \"player\"
-	@rtype: int
+	@rtype: float
 	"""
 	assertPlayer(player)
 
@@ -191,14 +207,14 @@ def getLife(player):
 #
 ##########################
 
-def setfireTimeSpace(player,value):
+def setFireTimeSpace(player,value):
 	"""
-	Get content of \"fireTimeSpace\" key from \"player\"
+	Set content of \"fireTimeSpace\" key from \"player\"
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
 	@param value: new value for the content of \"fireTimeSpace\" key from \"player\"
-	@type value: int
+	@type value: float
 
 	@return: -
 	@rtype: void
@@ -211,6 +227,26 @@ def setfireTimeSpace(player,value):
 
 	return
 
+def setShotSpeed(player,value):
+	"""
+	Set content of \"shotSpeed\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param value: new value for the content of \"shotSpeed\" key from \"player\"
+	@type value: float
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+	assert type(value) is float or type(value) is int
+	value = float(value)
+
+	player["shotSpeed"] = value
+
+	return 
+
 def setLife(player,value):
 	"""
 	Get content of \"life\" key from \"player\"
@@ -218,12 +254,12 @@ def setLife(player,value):
 	@type player: dict
 
 	@param value: new value for the content of \"life\" key from \"player\"
-	@type value: int
+	@type value: float
 
 	@return: -
 	@rtype: void
 	"""
-	assert type(value) is int
+	assert type(value) is float
 	assert value >= 0 and value <= 1000,"Life out of range"
 	assertPlayer(player)
 
