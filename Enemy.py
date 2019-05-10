@@ -8,7 +8,7 @@ import Shot
 import time
 import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scoreValue"]
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the enemy. Each one is erase if it's out of the screen

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#file containing definition of "Item" type : base for all object which will move
+#file containing definition of "Item" type : base for all object which have sprites or move.
 
 #search for tag "#PERFORMANCE" to see which lines can be commented to increase performances
 
@@ -92,14 +92,14 @@ def tryCollide(item1,item2):
 
 	tempList = [item1,item2]
 
-	x1,y1 = Object.getX(item1),Object.getY(item1)
-	x2,y2 = Object.getX(item2),Object.getY(item2)
+	x1,y1 = int(round(Object.getX(item1))),int(round(Object.getY(item1)))
+	x2,y2 = int(round(Object.getX(item2))),int(round(Object.getY(item2)))
 
 	smallerIndex = 0 if width1*height1 < width2*height2 else 1 #search which item is the smaller
 
 	for i in range(0,Object.getWidth(tempList[smallerIndex])):
 		for j in range(0,Object.getHeight(tempList[smallerIndex])):
-			if(Object.getDataAt(item1,x1+i,y1+j) != '' and Object.getDataAt(item2,x2+i,y2+j) != ''): #if colliding
+			if(): #if colliding
 				return True
 
 	return False
