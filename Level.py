@@ -5,6 +5,7 @@
 from PyTry import *
 import Player
 import HUD
+import Shot
 
 import os
 import time
@@ -183,9 +184,9 @@ def interact(lvl):
 		Player.takeDamage(lvl["playerItem"],20)
 
 	for i in Player.getShotList(lvl["playerItem"]):
-		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
-			Tools.prDly("HEIEHFKEKFEJK")
-			del i
+		Shot.assertShot(i)
+		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i,True)):
+			Player.getShotList(lvl["playerItem"]).remove(i)
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
 

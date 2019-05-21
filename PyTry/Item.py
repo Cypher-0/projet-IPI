@@ -85,8 +85,8 @@ def tryCollide(item1,item2,coordinatesCheckOnly = False):
 	@rtype: bool
 	"""
 
-	assertItem(item1)
-	assertItem(item2)
+	#assertItem(item1)
+	#assertItem(item2)
 
 	width1 = Object.getWidth(item1)
 	height1 = Object.getHeight(item1)

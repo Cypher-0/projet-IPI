@@ -126,10 +126,24 @@ def interact(player):
 		Item.move(player["shotList"][i],dt)
 
 	for i in player["shotList"]:
-		if(Object.getX(i) >= Object.SCREEN_WIDTH or Item.tryCollide(player,i)):
+		if(Object.getX(i) >= Object.SCREEN_WIDTH):
 			del i
 
 	return
+
+def delShotAt(player,index):
+	"""
+	Delete player's shot at specified index
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+	assert type(index) is int
+
+	del player["shotList"][i]
 
 
 def show(player):
