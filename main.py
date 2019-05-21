@@ -7,7 +7,8 @@ import time
 import sys
 import subprocess
 
-dt = None
+dtShow = None
+dtCalc = Object.dt
 
 saveName = "1"
 
@@ -17,17 +18,16 @@ prov = Level.Level("Levels/l0",saveName)
 
 keyboard_default = None
 
-SCREEN_WIDTH = 166
+SCREEN_WIdtShowH = 166
 SCREEN_HEIGHT = 48
 
 def init():
-	global dt,keyboard_default,kb_global
+	global dtShow,keyboard_default,kb_global
 
 	#Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
 	Tools.sysExec("python2.7 initTerm.py")
 
-	dt = 0.06
-	#dt = 0.09
+	dtShow = 0.06
 
 	keyboard_default = KeyBinder.initKbStgs()
 
@@ -49,7 +49,7 @@ def quit():
 	return 
 
 def live():
-	global dt
+	global dtShow
 	Level.interact(prov)
 	KeyBinder.interact(kb_global)
 
@@ -59,8 +59,9 @@ def show():
 	global SCREEN_WIDTH,SCREEN_HEIGHT
 
 	#on clear la console et on réinitialise le curseur
-	sys.stdout.write("\033[1;1H")
-	sys.stdout.write("\033[2J")
+	#sys.stdout.write("\033[1;1H")
+	#sys.stdout.write("\033[2J")
+	Tools.sysExec("clear")
 
 	#affichage des different element
 	#Object.show(obj)
@@ -78,21 +79,24 @@ def main():
 
 	i = 0 #variable d'incrémentation de test
 
-	lastTime = 0
+	lastTimeShow = 0
+	lastTimeCalc = 0
 
 	#70
 	while(i < 25000):
 
-		live()
-		if(time.time()-lastTime > dt):
+		if(time.time()-lastTimeCalc > dtCalc):
+			live()
+			lastTimeCalc = time.time()
+			KeyBinder.clearBuffer()
+		if(time.time()-lastTimeShow > dtShow):
 			show()
-			lastTime = time.time()
+			lastTimeShow = time.time()
 			#Tools.prDly("SALUT")
-		KeyBinder.clearBuffer()
-		time.sleep(Level.dt)
+		#time.sleep(Level.dtShow)
 		
 
-		i+=1
+		#i+=1
 
 	quit()
 

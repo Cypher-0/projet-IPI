@@ -8,15 +8,17 @@ import Shot
 import time
 import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]#+item
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immuteTime","lastDmgTime","isImmute"]#+item
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
 #shotSpeed : float : player's shot speed on screen
 
 #life : float : player's life [0;100]
-#startBlink : float : time when player started blinking
-#blinkTime : float : player will blink during this time
+
+#immuteTime : float : Player can't take damage during this time from "lastDmgTime"
+#lastDmgTime : float : player last damage time, used to calculate immunity time
+#isImmute : bool : can the player take damage ?
 
 """
 \"Player\" type attributes list
@@ -61,6 +63,10 @@ def Player(datas,x,y,fireTimeSpace):
 	object["shotSpeed"] = 50
 	object["life"] = 100
 
+	object["immuteTime"] = 1
+	object["lastDmgTime"] = 0
+	object["isImmute"] = False
+
 	return object
 
 def takeDamage(player,amount):
@@ -77,6 +83,10 @@ def takeDamage(player,amount):
 	"""
 
 	assertPlayer(player)
+
+	if(player["isImmute"] == True):
+		return
+
 	assert type(amount) is int or type(amount) is float
 
 	player["life"] -= amount
@@ -129,21 +139,28 @@ def interact(player):
 		if(Object.getX(i) >= Object.SCREEN_WIDTH):
 			del i
 
+	if(player["isImmute"]):
+		if(time.time() - player["lastDmgTime"] >= player["immuteTime"]):
+			player["isImmute"] = False
+
 	return
 
-def delShotAt(player,index):
+def giveImmute(player,timeL):
 	"""
-	Delete player's shot at specified index
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
+
+	@param time: Player immunity time
+	@type time: float
 
 	@return: -
 	@rtype: void
 	"""
-	assertPlayer(player)
-	assert type(index) is int
+	player["lastDmgTime"] = time.time()
+	player["immuteTime"] = timeL
+	player["isImmute"] = True
 
-	del player["shotList"][i]
+	return
 
 
 def show(player):
@@ -161,9 +178,11 @@ def show(player):
 	sys.stdout.write("\033[1m")
 	for i in range(0,len(player["shotList"])):
 		Object.show(player["shotList"][i])
-	#sys.stdout.write("\033[0m")
+	if(player["isImmute"]):
+		sys.stdout.write("\033[0;5m")
 
 	Object.show(player)
+	sys.stdout.write("\033[0m")
 
 	return
 
@@ -285,10 +304,10 @@ def setLife(player,value):
 	@return: -
 	@rtype: void
 	"""
-	assert type(value) is float
+	assert type(value) is float or int
 	assert value >= 0 and value <= 1000,"Life out of range"
 	assertPlayer(player)
 
-	player["life"] = value
+	player["life"] = float(value)
 
 	return

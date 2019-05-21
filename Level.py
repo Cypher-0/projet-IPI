@@ -180,12 +180,13 @@ def interact(lvl):
 	Player.interact(lvl["playerItem"])
 
 	# ----------- Manage collisions
-	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])):
-		Player.takeDamage(lvl["playerItem"],20)
+	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])): #collisions between player and foreground
+		Player.takeDamage(lvl["playerItem"],50)
+		Player.giveImmute(lvl["playerItem"],3)
 
-	for i in Player.getShotList(lvl["playerItem"]):
+	for i in Player.getShotList(lvl["playerItem"]): #collisions btween players shots and foreground
 		Shot.assertShot(i)
-		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i,True)):
+		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
 			Player.getShotList(lvl["playerItem"]).remove(i)
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
@@ -210,17 +211,11 @@ def loadPlayer(saveName):
 	content = file.read()
 	file.close()
 
-	tempDict = {"fireTimeSpace":0,"shotSpeed":0,"life":0}
+	exec(content)
 
-	lsLines = content.splitlines()
-	for i in range(0,len(lsLines)):
-		part1 = lsLines[i].split("=")[0]
-		part2 = lsLines[i].split("=")[1]
-		tempDict[part1] = float(part2)
-
-	Player.setFireTimeSpace(playerItem,tempDict["fireTimeSpace"])
-	Player.setShotSpeed(playerItem,tempDict["shotSpeed"])
-	Player.setLife(playerItem,tempDict["life"])
+	Player.setFireTimeSpace(playerItem,fireTimeSpace)
+	Player.setShotSpeed(playerItem,shotSpeed)
+	Player.setLife(playerItem,life)
 
 
 	return playerItem

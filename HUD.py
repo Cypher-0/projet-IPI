@@ -23,7 +23,7 @@ attributesList = ["score","scoreObjective","playerMaxLife","pbLife","pbLevel"] #
 #
 ##########################
 
-HUD_COLOR = [0,0,220]
+HUD_COLOR = [50,200,220]
 
 def HUD(scoreObjective,playerMaxLife):
 	"""
