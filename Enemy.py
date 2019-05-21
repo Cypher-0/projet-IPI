@@ -15,8 +15,7 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scor
 #shotSpeed : float : enemy's shot speed on screen
 
 #life : float : enemy's life [0;100]
-#startBlink : float : time when enemy started blinking
-#blinkTime : float : enemy will blink during this time
+#scoreValue : float : score to give to the player when enemy destroyed
 
 """
 \"Enemy\" type attributes list
@@ -31,11 +30,65 @@ dt = Object.dt
 #
 ##########################
 
-enemyColor = [255,0,0]
+enemyColor = [255,150,0]
 
-def Enemy(datas,x,y,fireTimeSpace):
+def Enemy(enemyName,yPos = None):
 	"""
 	\"Enemy\" type constructor
+
+	@param enemyName: enemy name used to load from config file
+	@type enemyName: str
+
+	@param yPos: enemy y start position
+	@type yPos: float
+
+	@return: Dictionnary containing all informations about enemy
+	@rtype: dict
+	"""
+
+	assert type(enemyName) is str
+
+
+	startX = Object.SCREEN_WIDTH-2-30
+	startY = int(round(Object.SCREEN_HEIGHT/2))
+	
+	datas = Tools.createDatasFromPic("Enemys/"+enemyName+"/image.pic")
+	object = Item.Item(datas)
+
+	Object.setColor(object,enemyColor)
+	
+
+	object["lastShot"] = 0
+	object["shotList"] = []
+
+	file = open("Enemys/"+enemyName+"/config","r")
+	content = file.read()
+	file.close()
+	exec(content)
+
+#datas loaded from "exec" command
+	#enemy proprieties
+	object["fireTimeSpace"] = fireTimeSpace
+	object["shotSpeed"] = shotSpeed
+	object["life"] = life
+	object["scoreValue"] = scoreValue
+	#enemy position
+	Object.setX(object,startX)
+	if(yPos != None):
+		startY = yPos
+	Object.setY(object,startY)
+	#enemy speed and acceleration
+	Item.setVX(object,vX)
+	Item.setVY(object,vY)
+	Item.setAX(object,aX)
+	Item.setAY(object,aY)
+
+	return object
+
+
+def EnemyMan(datas,x,y,fireTimeSpace):
+	"""
+	\"Enemy\" type constructor, to used "manually"
 
 	@param datas: enemy appareance to display
 	@type datas: list
@@ -52,8 +105,11 @@ def Enemy(datas,x,y,fireTimeSpace):
 	@return: Dictionnary containing all informations about enemy
 	@rtype: dict
 	"""
+
+	assert type(fireTimeSpace) is int or float
+
 	object = Item.Item(datas,x,y,enemyColor)
-	object["fireTimeSpace"] = fireTimeSpace
+	object["fireTimeSpace"] = float(fireTimeSpace)
 	object["lastShot"] = 0
 	object["shotList"] = []
 	object["shotSpeed"] = 50
@@ -120,14 +176,14 @@ def interact(enemy):
 		enemy["lastShot"] = time.time()
 
 
-	rmCount = 0
 	for i in range(0,len(enemy["shotList"])):
 		Item.move(enemy["shotList"][i],dt)
-		if(Object.getX(enemy["shotList"][i]) > Object.SCREEN_WIDTH):
-			rmCount += 1
 
-	for i in range(0,rmCount):
-		del enemy["shotList"][i]
+	for i in enemy["shotList"]:
+		if(Object.getX(i) <= 0):
+			del i
+
+	Item.move(enemy,dt)
 
 	return
 
@@ -266,3 +322,17 @@ def setLife(enemy,value):
 	enemy["life"] = value
 
 	return
+
+
+
+##########################
+#
+#	Internale tests
+#
+##########################
+
+if(__name__ == "__main__"):
+	Tools.sysExec("clear")
+	e0 = Enemy("balloon")
+	Object.show(e0)
+	Tools.goAt(1,47)

@@ -14,7 +14,7 @@ saveName = "1"
 
 kb_global = KeyBinder.KeyBinder("global")
 obj = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic"),0,0,[0,255,0],-5)
-prov = Level.Level("Levels/l0",saveName)
+prov = Level.Level("l0",saveName)
 
 keyboard_default = None
 

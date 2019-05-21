@@ -4,16 +4,19 @@
 
 from PyTry import *
 import Player
+import Enemy
 import HUD
 import Shot
 
 import os
 import time
 import sys
+from random import randint
 
 dt = Object.dt
 
-attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","HUD","playerScore"] #+Item.attributesList
+attributesList = ["levelName","bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","maxEnemysNumber","HUD","playerScore","scoreObjective"] #+Item.attributesList
+"levelName"
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
 #fgItem0 : Item : foreGround of the level (part 1)
 #bgItem1 : Item : background of the level (part 2)
@@ -22,6 +25,10 @@ attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinde
 #playerItem : Player : player avatar
 #keyBinder : KeyBinder : keybinder of a level
 #enemyList : list of ? : list of all ennemys
+#maxEnemysNumber : int : max number of enemys on screen
+#HUD : HUD : head up display for the player
+#playerScore : float : player's score
+#scoreObjective : float : player score objective
 
 """
 \"Level\" type attributes list
@@ -36,37 +43,37 @@ fgSpeed = -50
 #
 ##########################
 
-def Level(folder,saveName):
+def Level(levelName,saveName):
 	"""
 	\"Level\" type constructor
-	@param folder: Folder containing all informations about the level
-	@type folder: str
+	@param levelName: levelName containing all informations about the level
+	@type levelName: str
 
-	@param saveName: Path to save folder of current player
+	@param saveName: Path to save levelName of current player
 	@type saveName: str
 
 	@return: Dictionnary containing all informations about level
 	@rtype: dict
 	"""
-	assert type(folder) is str
+	assert type("Levels/"+levelName) is str
 
-	lsFiles = os.listdir(folder)
-	assert "background.pic" in lsFiles, "Load level from %r failed : missing file : background.pic" % folder
-	#assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % folder
+	lsFiles = os.listdir("Levels/"+levelName)
+	assert "background.pic" in lsFiles, "Load level from %r failed : missing file : background.pic" % levelName
+	#assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % levelName
 
-	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),0,0,[70,70,70],fgSpeed+30)
-	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed+30)
+	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/background.pic",True),0,0,[70,70,70],fgSpeed+30)
+	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed+30)
 
-	fgItem0 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),0,0,[0,170,0],fgSpeed)
-	fgItem1 = Item.Item(Tools.createDatasFromPic("Levels/l0/foreground.pic"),Item.getBaseWidth(fgItem0)-1,0,[0,170,0],fgSpeed)
+	fgItem0 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/foreground.pic"),0,0,[0,170,0],fgSpeed)
+	fgItem1 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/foreground.pic"),Item.getBaseWidth(fgItem0)-1,0,[0,170,0],fgSpeed)
 
 	playerItem = loadPlayer(saveName)
 
 	hud = HUD.HUD(2000,Player.MAX_LIFE)
 
-	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None,"HUD":hud,"playerScore":0}
+	object = {"levelName":levelName,"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":[],"HUD":hud,"playerScore":0}
 
-	kb = KeyBinder.KeyBinder(folder[folder.rfind("/")+1:])
+	kb = KeyBinder.KeyBinder(levelName[levelName.rfind("/")+1:])
 	KeyBinder.addAction(kb,"z",movePlayerUp,object)
 	KeyBinder.addAction(kb,"q",movePlayerLeft,object)
 	KeyBinder.addAction(kb,"s",movePlayerDown,object)
@@ -76,6 +83,17 @@ def Level(folder,saveName):
 
 	Item.setVX(object["playerItem"],2.)
 	Item.setVY(object["playerItem"],1.)
+
+	#load datas from config file :
+	file = open("Levels/"+levelName+"/config","r")
+	content = file.read()
+	file.close()
+	exec(content)
+	object["scoreObjective"] = scoreObjective
+	object["maxEnemysNumber"] = maxEnemysNumber
+
+	for i in range(0,maxEnemysNumber):
+		addEnemy(object)
 
 	return object
 
@@ -121,8 +139,8 @@ def show(lvl):
 	Object.show(lvl["fgItem0"])
 	Object.show(lvl["fgItem1"])
 
-	#for a in lvl["enemyList"]:
-	#	Object.show(a)
+	for a in lvl["enemyList"]:
+		Object.show(a)
 
 	Player.show(lvl["playerItem"])
 
@@ -179,17 +197,49 @@ def interact(lvl):
 
 	Player.interact(lvl["playerItem"])
 
+	
+	# ----------- Manage enemys
+	for i in lvl["enemyList"]:
+		Enemy.interact(i)
+
+
+
+
 	# ----------- Manage collisions
 	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])): #collisions between player and foreground
 		Player.takeDamage(lvl["playerItem"],50)
 		Player.giveImmute(lvl["playerItem"],3)
 
-	for i in Player.getShotList(lvl["playerItem"]): #collisions btween players shots and foreground
-		Shot.assertShot(i)
+	for i in Player.getShotList(lvl["playerItem"]):
+		#collisions btween players shots and foreground
 		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
 			Player.getShotList(lvl["playerItem"]).remove(i)
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
+
+	return
+
+def addEnemy(lvl,name = None):
+	"""
+	Add an enemy to the level
+	
+	@param lvl: Dictionnary containing all information about one \"Level\" object
+	@type lvl: dict
+
+	@param name: enemy's name to add
+	@type name: str
+
+	@return: -
+	@rtype: void
+	"""
+
+	assert type(name) is str or name == None
+	assertLevel(lvl)
+
+	if(name == None):
+		#if no name specified, random choice
+		listNames = os.listdir("./Enemys/")
+		lvl["enemyList"].append(Enemy.Enemy(listNames[randint(0,len(listNames)-1)]))
 
 	return
 

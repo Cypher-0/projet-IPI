@@ -81,7 +81,7 @@ def show(hud):
 
 	Object.show(hud["pbLife"])
 	Object.show(hud["pbLevel"])
-	sys.stdout.write("\033[47;80H\033[48;2;0;0;220m\033[38;5;255;255;240m"+str(hud["score"])+"\033[0m")
+	sys.stdout.write("\033[47;"+str(int(Object.SCREEN_WIDTH/2-len(str(hud["score"]))/2))+"H\033[48;2;0;0;220m\033[38;5;255;255;240m"+str(hud["score"])+"\033[0m")
 
 	return
 
@@ -100,7 +100,7 @@ def refreshValues(hud,life,score):
 
 	assertHUD(hud)
 	assert type(life) is float or int
-	assert type(score) is int
+	assert type(score) is float or int
 
 	sys.stdout.write("\033[1m")
 	ProgressBar.setProgressionPercent(hud["pbLife"],int(round(100*life/hud["playerMaxLife"])))
