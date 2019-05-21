@@ -4,7 +4,9 @@
 
 from PyTry import *
 
-attributesList = ["score","scoreObjective","pbLife","pbLevel"] #+Item.attributesList
+import sys
+
+attributesList = ["score","scoreObjective","playerMaxLife","pbLife","pbLevel"] #+Item.attributesList
 #score : int : player score in current level
 #scoreObjcetive : int : player objective to finish the level
 #pbLife : ProgressBar : player's life
@@ -23,19 +25,24 @@ attributesList = ["score","scoreObjective","pbLife","pbLevel"] #+Item.attributes
 
 HUD_COLOR = [0,0,220]
 
-def HUD(scoreObjective):
+def HUD(scoreObjective,playerMaxLife):
 	"""
-
+	\"HUD\" type constructor
 	@param scoreObjective: Score to reach to finish level
 	@type scoreObjective: int
+
+	@param playerMaxLife: float
+	@type playerMaxLife: float
 
 	@return: dict containing all information about one "HUD" object
 	@rtype: dict
 	"""
 
-	pbLife = ProgressBar.ProgressBar(70,35,43,HUD_COLOR)
-	pbLevel = ProgressBar.ProgressBar(150,4,2,HUD_COLOR)
-	hud = {"score":0,"scoreObjective":scoreObjective,"pbLife":pbLife,"pbLevel":pbLevel}
+	assert type(scoreObjective) is int
+
+	pbLife = ProgressBar.ProgressBar(70,48,46,HUD_COLOR)
+	pbLevel = ProgressBar.ProgressBar(150,7,0,HUD_COLOR)
+	hud = {"score":0,"scoreObjective":scoreObjective,"playerMaxLife":playerMaxLife,"pbLife":pbLife,"pbLevel":pbLevel}
 
 
 
@@ -63,14 +70,40 @@ def assertHUD(HUD):
 
 def show(hud):
 	"""
+	Display the HUD
 	@param hud: Dictionnary containing all information about one \"HUD\" object
 	@type hud: dict
 
 	@return: -
 	@rtype: void
 	"""
+	assertHUD(hud)
 
 	Object.show(hud["pbLife"])
 	Object.show(hud["pbLevel"])
+	sys.stdout.write("\033[47;80H\033[48;2;0;0;220m\033[38;5;255;255;240m"+str(hud["score"])+"\033[0m")
+
+	return
+
+def refreshValues(hud,life,score):
+	"""
+	Refresh values of the HUD
+	@param hud: Dictionnary containing all information about one \"HUD\" object
+	@type hud: dict
+
+	@param life: Player's life
+	@type life: float
+
+	@param score: Player's score
+	@type score: int
+	"""
+
+	assertHUD(hud)
+	assert type(life) is float or int
+	assert type(score) is int
+
+	sys.stdout.write("\033[1m")
+	ProgressBar.setProgressionPercent(hud["pbLife"],int(round(100*life/hud["playerMaxLife"])))
+	ProgressBar.setProgressionPercent(hud["pbLevel"],int(round(100*score/hud["scoreObjective"])))
 
 	return

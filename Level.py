@@ -12,7 +12,7 @@ import sys
 
 dt = Object.dt
 
-attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","HUD"] #+Item.attributesList
+attributesList = ["bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","HUD","playerScore"] #+Item.attributesList
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
 #fgItem0 : Item : foreGround of the level (part 1)
 #bgItem1 : Item : background of the level (part 2)
@@ -61,9 +61,9 @@ def Level(folder,saveName):
 
 	playerItem = loadPlayer(saveName)
 
-	hud = HUD.HUD(2000)
+	hud = HUD.HUD(2000,Player.MAX_LIFE)
 
-	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None,"HUD":hud}
+	object = {"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":None,"HUD":hud,"playerScore":0}
 
 	kb = KeyBinder.KeyBinder(folder[folder.rfind("/")+1:])
 	KeyBinder.addAction(kb,"z",movePlayerUp,object)
@@ -179,9 +179,15 @@ def interact(lvl):
 	Player.interact(lvl["playerItem"])
 
 	# ----------- Manage collisions
-	Item.tryCollide(lvl["fgItem0"],lvl["playerItem"])
-	Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])
+	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])):
+		Player.takeDamage(lvl["playerItem"],20)
 
+	for i in Player.getShotList(lvl["playerItem"]):
+		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
+			Tools.prDly("HEIEHFKEKFEJK")
+			del i
+
+	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
 
 	return
 
@@ -267,7 +273,7 @@ def movePlayerDown(lvl):
 	assertLevel(lvl)
 
 	y = Object.getY(lvl["playerItem"])
-	if(y < Object.SCREEN_HEIGHT-1):
+	if(y < Object.SCREEN_HEIGHT-4):
 		Object.setY(lvl["playerItem"],y+Item.getVY(lvl["playerItem"]))
 
 	return

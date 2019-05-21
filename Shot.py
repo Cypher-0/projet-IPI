@@ -66,6 +66,17 @@ def assertShot(shot):
 
 	return
 
+def delShot(shot):
+	"""
+	Delete designed shot
+	@param shot: Dictionnary containing all information about one \"Shot\" object
+	@type shot: dict
+	@return: -
+	@rtype: void
+	"""
+	assertShot(shot)
+	del shot
+
 ##########################
 #
 #	Getters

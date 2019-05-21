@@ -8,7 +8,7 @@ import Shot
 import time
 import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]#+item
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
@@ -23,8 +23,10 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life"]
 @type: list
 """
 
-dt = Object.dt
+MAX_LIFE = 100
 
+dt = Object.dt
+"""dt used in calcs"""
 ##########################
 #
 #	Constructor
@@ -120,14 +122,12 @@ def interact(player):
 		player["lastShot"] = time.time()
 
 
-	rmCount = 0
 	for i in range(0,len(player["shotList"])):
 		Item.move(player["shotList"][i],dt)
-		if(Object.getX(player["shotList"][i]) > Object.SCREEN_WIDTH):
-			rmCount += 1
 
-	for i in range(0,rmCount):
-		del player["shotList"][i]
+	for i in player["shotList"]:
+		if(Object.getX(i) >= Object.SCREEN_WIDTH or Item.tryCollide(player,i)):
+			del i
 
 	return
 
@@ -199,6 +199,18 @@ def getLife(player):
 
 	return player["life"]
 
+def getShotList(player):
+	"""
+	Get content of \"shotList\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+
+	return player["shotList"]
 
 
 ##########################

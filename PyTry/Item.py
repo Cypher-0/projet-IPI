@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#file containing definition of "Item" type : base for all object which have sprites or move.
+#file containing definition of "Item" type : base for all object which will move
 
 #search for tag "#PERFORMANCE" to see which lines can be commented to increase performances
 
@@ -69,13 +69,17 @@ def move(item,dt): #procedure to define new position of the item
 	Object.setX(item,x)#x changes
 	Object.setY(item,y)#y changes
 
-def tryCollide(item1,item2):
+def tryCollide(item1,item2,coordinatesCheckOnly = False):
 	"""
+	Is 2 items colliding ?
 	@param item1: Object of type "Item"
 	@type item1: dict
 
 	@param item2: Object of type "Item"
 	@type item2: dict
+
+	@param coordinatesCheckOnly: Should we only analyse coordinates ? (faster but less precise)
+	@type coordinatesCheckOnly: bool
 
 	@return: Are item1 and item2 colliding ? Yes:True   No:False
 	@rtype: bool
@@ -86,23 +90,97 @@ def tryCollide(item1,item2):
 
 	width1 = Object.getWidth(item1)
 	height1 = Object.getHeight(item1)
+	x1 = Object.getX(item1)
+	y1 = Object.getY(item1)
 
 	width2 = Object.getWidth(item2)
 	height2 = Object.getHeight(item2)
+	x2 = Object.getX(item2)
+	y2 = Object.getY(item2)
 
-	tempList = [item1,item2]
+	"""tempList = [item1,item2]
 
 	x1,y1 = int(round(Object.getX(item1))),int(round(Object.getY(item1)))
 	x2,y2 = int(round(Object.getX(item2))),int(round(Object.getY(item2)))
 
-	smallerIndex = 0 if width1*height1 < width2*height2 else 1 #search which item is the smaller
+	smallerIndex = 0 if width1*height1 < width2*height2 else 1 #search which item is the smaller """
 
-	for i in range(0,Object.getWidth(tempList[smallerIndex])):
-		for j in range(0,Object.getHeight(tempList[smallerIndex])):
-			if(): #if colliding
-				return True
+	startX1,startX2,startY1,startY2 = 0,0,0,0
+	endX1,endX2,endY1,endY2 = 0,0,0,0
+	forWidth,forHeight = 0,0
+
+	if((x1+width1 < x2) or (x2+width2 < x1)): #if objects are not colliding on xS
+		return False
+
+	#x tests
+	#Tools.prDly("TESTS on X :")
+	if(x2 <= x1 and x2+width2 <= x1+width1): #if object potentially collide on x  #CASE 1
+		startX1=0;startX2=int(round(x1-x2))
+		endX2=width2-1;endX1=width2-startX2-1
+		forWidth = endX2-startX2
+		#Tools.prDly("Cas 1 :\n"+str(startX1)+";"+str(endX1)+"\n"+str(startX2)+";"+str(endX2))
+	elif(x2 <= x1 and x2+width2 >= x1+width1): #CASE 2
+		startX1=0;startX2=int(round(x1-x2))
+		endX1=width1-1;endX2=startX2+width1-1
+		forWidth = width1-1
+		#Tools.prDly("Cas 2 :\n"+str(startX1)+";"+str(endX1)+"\n"+str(startX2)+";"+str(endX2))
+	elif(x2 >= x1 and x2+width2 >= x1+width1): #CASE 3
+		startX1=int(round(x2-x1));startX2=0
+		endX1=width1-1;endX2=width1-startX1-1
+		forWidth = endX1-startX1
+		#Tools.prDly("Cas 3 :\n"+str(startX1)+";"+str(endX1)+"\n"+str(startX2)+";"+str(endX2))
+	elif(x2 >= x1 and x2+width2 <= x1+width1): #CASE 4
+		startX2 = 0;endX2 = width2-1
+		startX1 = int(round(x2-x1));endX1 = startX1+width2-1
+		forWidth = width2-1
+		#Tools.prDly("Cas 4 :\n"+str(startX1)+";"+str(endX1)+"\n"+str(startX2)+";"+str(endX2))
+	else:
+		return False
+
+
+	#y tests
+	#Tools.prDly("TESTS on Y :")
+	if(y2 <= y1 and y2+height2 <= y1+height1): #if object potentially collide on x   #CASE 1
+		startY1=0;startY2=int(round(y1-y2))
+		endY2=height2-1;endY1=height2-startY2-1
+		forHeight = endY2-startY2
+		#Tools.prDly("Cas 1 :\n"+str(startY1)+";"+str(endY1)+"\n"+str(startY2)+";"+str(endY2))
+	elif(y2 <= y1 and y2+height2 >= y1+height1): #CASE 2
+		startY1=0;startY2=int(round(y1-y2))
+		endY1=height1-1;endY2=startY2+height1-1
+		forHeight = height1-1
+		#Tools.prDly("Cas 2 :\n"+str(startY1)+";"+str(endY1)+"\n"+str(startY2)+";"+str(endY2))
+	elif(y2 >= y1 and y2+height2 >= y1+height1): #CASE 3
+		startY1=int(round(y2-y1));startY2=0
+		endY1=height1-1;endY2=height1-startY1-1
+		forHeight = endY1-startY1
+		#Tools.prDly("Cas 3 :\n"+str(startY1)+";"+str(endY1)+"\n"+str(startY2)+";"+str(endY2))
+	elif(y2 >= y1 and y2+height2 <= y1+height1): #CASE 4
+		startY2 = 0;endY2 = height2-1
+		startY1 = int(round(y2-y1));endY1 = startY1+height2-1
+		forHeight = height2-1
+		#Tools.prDly("Cas 4 :\n"+str(startY1)+";"+str(endY1)+"\n"+str(startY2)+";"+str(endY2))
+	else:
+		return False
+
+	forWidth += 1 #correct the transition from coordinates to value
+	forHeight += 1 #correct the transition from coordinates to value
+	#Tools.prDly("\n\n"+str(forWidth)+";"+str(forHeight))
+
+	if(forWidth != 0 and forHeight != 0):
+		if(coordinatesCheckOnly):
+			#Tools.prDly("CHECK COO ONLY")
+			return True
+		else:
+			for i in range(0,forWidth):
+				for j in range(0,forHeight):
+					data1 = Object.getDataAt(item1,i+startX1,j+startY1)
+					data2 = Object.getDataAt(item2,i+startX2,j+startY2)
+					if(data1 != '' and data1 != ' ' and data2 != '' and data2 != ' '):
+						return True
 
 	return False
+
 
 ##########################
 #
@@ -251,7 +329,14 @@ def setSprite(item,index): #set which sprite to be displayed on screen
 
 if(__name__ == "__main__"):
 
-	it = Item([[0,0,0,0,0],[0,0,1,0,0],[0,1,1,1,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],10,5,[21,22,23],1.1,1,0.1,0.2)
+	#it = Item([[0,1,2,3,4,5],[1,0,0,0,0,1],[2,0,0,0,0,2],[3,0,0,0,0,3],[4,0,0,0,0,4],[5,0,0,0,0,5]],28,5,[255,255,255])
+	#it = Item([[0,1,2,3,4,5]],28,5,[255,255,255])
+	#it = Item([[0,'','','','',''],[1,0,'','','',''],[2,0,0,'2','',''],[3,0,0,0,'2',''],[4,0,0,0,0,'2'],[5,0,0,0,0,5]],28,5,[255,255,255])
+
+	#it2 = Item([[0,1,2,3,4,5,6,7,8],[1,0,0,0,0,0,0,0,1],[2,0,0,0,0,0,0,0,2],[3,0,0,0,0,0,0,0,3]],29,4,[0,255,0])
+	#it2 = Item([[0,1,2],[1,0,0]],30,8,[0,255,0])
+	#it2 = Item([[0,1,2,3,4,5,6,7,8],['',0,0,0,0,0,0,0,1],['','',0,0,0,0,0,0,2],['','','',0,0,0,0,0,3]],28,4,[0,255,0])
+
 	print("Is it a correct Item type ? : "+str(assertItem(it)))
 	print("x speed : "+str(getVX(it)))
 	print("y speed : "+str(getVY(it)))
@@ -266,3 +351,10 @@ if(__name__ == "__main__"):
 	print("x acceleration : "+str(getAX(it)))
 	print("y acceleration : "+str(getAY(it)))
 	print("Sprite 0 = "+str(getSpriteAt(it,0))) #display base data
+
+	Tools.sysExec("clear")
+
+	Object.show(it)
+	Object.show(it2)
+	Tools.goAt(1,1)
+	print(tryCollide(it,it2))

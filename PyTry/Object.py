@@ -153,7 +153,6 @@ def show(object,showSpaces = False):#showSpaces allow user to print spaces in pl
 				if((data != ' ' and not(showSpaces))):
 					objectStr += '\033['+str(i+int(round(Y))+1)+';'+str(j+int(round(X))+1)+'H'  #+1 because terminal 0 is at [1,1]
 					objectStr += str(data)
-	objectStr += "\033[0m"
 
 	sys.stdout.write(objectStr)
 
@@ -297,7 +296,7 @@ def getDataAt(object,x,y): #get object data at [x,y]
 	assert type(x) is int #PERFORMANCE  --> comment this line to increase performances (use carefully)
 	assert type(y) is int #PERFORMANCE  --> comment this line to increase performances (use carefully)
 	assertObject(object) #PERFORMANCE  --> comment this line to increase performances (use carefully)
-	return object[y][x]
+	return object["datas"][y][x]
 
 ##########################
 #
