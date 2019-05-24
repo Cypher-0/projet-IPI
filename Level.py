@@ -140,7 +140,7 @@ def show(lvl):
 	Object.show(lvl["fgItem1"])
 
 	for a in lvl["enemyList"]:
-		Object.show(a)
+		Enemy.show(a)
 
 	Player.show(lvl["playerItem"])
 
