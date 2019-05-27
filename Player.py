@@ -128,7 +128,7 @@ def interact(player):
 	assertPlayer(player)
 
 	if(time.time()-player["lastShot"] > player["fireTimeSpace"]):
-		player["shotList"].append(Shot.Shot(Object.getX(player)+Item.getBaseWidth(player),Object.getY(player)+int(Item.getBaseHeight(player)/2),player["shotSpeed"],False))
+		player["shotList"].append(Shot.Shot(Object.getX(player)+Item.getBaseWidth(player),Object.getY(player)+int(Item.getBaseHeight(player)/2),player["shotSpeed"],False,[255,0,255]))
 		player["lastShot"] = time.time()
 
 

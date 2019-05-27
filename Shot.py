@@ -19,9 +19,9 @@ attributesList = ["isEnnemy"]
 #
 ##########################
 
-shotColor = [255,0,255]
+shotColorFriendly = [255,0,255]
 
-def Shot(x,y,vX,isEnnemy = True):
+def Shot(x,y,vX,isEnnemy = True,shotColor = [255,150,0]):
 	"""
 	\"Shot\" type constructor
 	
@@ -40,6 +40,11 @@ def Shot(x,y,vX,isEnnemy = True):
 	@return: Dictionnary containing all informations about shot
 	@rtype: dict
 	"""
+
+	assert type(x) is float or int
+	assert type(y) is float or int
+	assert type(vX) is float or int
+
 	object = Item.Item([['*']],x,y,shotColor,vX)
 	object["isEnnemy"] = isEnnemy
 
