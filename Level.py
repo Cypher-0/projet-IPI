@@ -200,20 +200,47 @@ def interact(lvl):
 	
 	# ----------- Manage enemys
 	for i in lvl["enemyList"]:
-		Enemy.interact(i)
+		if(Object.getX(i) < -Item.getBaseWidth(i)):
+			lvl["enemyList"].remove(i)
+		else:
+			Enemy.interact(i)
+	while(len(lvl["enemyList"]) < lvl["maxEnemysNumber"]):
+		addEnemy(lvl)
 
 
 
 
 	# ----------- Manage collisions
-	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])): #collisions between player and foreground
+	#collisions between player and foreground
+	if(Item.tryCollide(lvl["fgItem0"],lvl["playerItem"]) or Item.tryCollide(lvl["fgItem1"],lvl["playerItem"])):
 		Player.takeDamage(lvl["playerItem"],50)
 		Player.giveImmute(lvl["playerItem"],3)
 
+	#collisions btween players shots and...
 	for i in Player.getShotList(lvl["playerItem"]):
-		#collisions btween players shots and foreground
+		#player shot and foregrounds
 		if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
-			Player.getShotList(lvl["playerItem"]).remove(i)
+			delPlayerShot(lvl,i)
+		#player shot and enemys
+		for j in lvl["enemyList"]:
+			if(Item.tryCollide(i,j)):
+					Enemy.takeDamage(j,Player.getDamageValue(lvl["playerItem"]))
+					delPlayerShot(lvl,i)
+					#if enemy destroyed
+					if(Enemy.getLife(j) == 0):
+						lvl["enemyList"].remove(j)
+
+
+	#collisions btween enemys and ...
+	for j in lvl["enemyList"]:
+		for i in Enemy.getShotList(j):
+			#enemys shots and foreground
+			if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
+				Enemy.getShotList(j).remove(i)
+			#enemys shots and player
+			if(Item.tryCollide(i,lvl["playerItem"])):
+				Player.takeDamage(lvl["playerItem"],Enemy.getDamageValue(j))
+				Enemy.getShotList(j).remove(i)
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
 
@@ -266,6 +293,7 @@ def loadPlayer(saveName):
 	Player.setFireTimeSpace(playerItem,fireTimeSpace)
 	Player.setShotSpeed(playerItem,shotSpeed)
 	Player.setLife(playerItem,life)
+	Player.setDamageValue(playerItem,damageValue)
 
 
 	return playerItem
@@ -341,6 +369,26 @@ def movePlayerUp(lvl):
 		Object.setY(lvl["playerItem"],y-Item.getVY(lvl["playerItem"]))
 
 	return
+
+def delPlayerShot(lvl,shot):
+	"""
+	Private function to securise player's shots delete
+
+	@param lvl: Dictionnary containing all information about one \"Level\" object
+	@type lvl: dict
+
+	@param shot: Dictionnary containing all information about one \"Shot\" object
+	@type shot: dict
+
+	@return: -
+	@rtype: void
+	"""
+	ls = Player.getShotList(lvl["playerItem"])
+	if(shot in ls):
+		ls.remove(shot)
+
+	return 
+
 
 
 

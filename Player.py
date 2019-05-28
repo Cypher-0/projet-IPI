@@ -8,7 +8,7 @@ import Shot
 import time
 import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immuteTime","lastDmgTime","isImmute"]#+item
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immuteTime","lastDmgTime","isImmute","damageValue"]#+item
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
@@ -19,6 +19,7 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immu
 #immuteTime : float : Player can't take damage during this time from "lastDmgTime"
 #lastDmgTime : float : player last damage time, used to calculate immunity time
 #isImmute : bool : can the player take damage ?
+#damageValue : float : how much damage per shot
 
 """
 \"Player\" type attributes list
@@ -66,6 +67,7 @@ def Player(datas,x,y,fireTimeSpace):
 	object["immuteTime"] = 1
 	object["lastDmgTime"] = 0
 	object["isImmute"] = False
+	object["damageValue"] = 0
 
 	return object
 
@@ -128,7 +130,7 @@ def interact(player):
 	assertPlayer(player)
 
 	if(time.time()-player["lastShot"] > player["fireTimeSpace"]):
-		player["shotList"].append(Shot.Shot(Object.getX(player)+Item.getBaseWidth(player),Object.getY(player)+int(Item.getBaseHeight(player)/2),player["shotSpeed"],False,[255,0,255]))
+		player["shotList"].append(Shot.Shot(Object.getX(player)+Item.getBaseWidth(player),Object.getY(player)+int(Item.getBaseHeight(player)/2),player["shotSpeed"],player["damageValue"],False,[255,0,255]))
 		player["lastShot"] = time.time()
 
 
@@ -245,6 +247,19 @@ def getShotList(player):
 
 	return player["shotList"]
 
+def getDamageValue(player,):
+	"""
+	Get content of \"damageValue\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+
+	return player["damageValue"]
+
 
 ##########################
 #
@@ -305,9 +320,28 @@ def setLife(player,value):
 	@rtype: void
 	"""
 	assert type(value) is float or int
-	assert value >= 0 and value <= 1000,"Life out of range"
+	assert value >= 0 and value <= MAX_LIFE,"Life out of range"
 	assertPlayer(player)
 
 	player["life"] = float(value)
+
+	return
+
+def setDamageValue(player,value):
+	"""
+	Set content of \"damageValue\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param value: new value for the content of \"damageValue\" key from \"player\"
+	@type value: float
+
+	@return: -
+	@rtype: void
+	"""
+	assert type(value) is float or int
+	assertPlayer(player)
+
+	player["damageValue"] = float(value)
 
 	return

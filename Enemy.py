@@ -7,8 +7,10 @@ import Shot
 
 import time
 import sys
+from random import randint
+from math import sin
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scoreValue"]
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scoreValue","moveFunction","startY","damageValue"]
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the enemy. Each one is erase if it's out of the screen
@@ -16,6 +18,9 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scor
 
 #life : float : enemy's life [0;100]
 #scoreValue : float : score to give to the player when enemy destroyed
+#moveFunction : str : y = f(x)
+#startY : float : enemy start point on y axis
+#damageValue : float : how much damage per shot
 
 """
 \"Enemy\" type attributes list
@@ -72,6 +77,9 @@ def Enemy(enemyName,yPos = None):
 	object["shotSpeed"] = shotSpeed
 	object["life"] = life
 	object["scoreValue"] = scoreValue
+	object["damageValue"] = damageValue
+	object["moveFunction"] = moveFunction
+	object["startY"] = startY
 	#enemy position
 	Object.setX(object,startX)
 	if(yPos != None):
@@ -86,7 +94,7 @@ def Enemy(enemyName,yPos = None):
 	return object
 
 
-def EnemyMan(datas,x,y,fireTimeSpace):
+#def EnemyMan(datas,x,y,fireTimeSpace):
 	"""
 	\"Enemy\" type constructor, to used "manually"
 
@@ -106,16 +114,16 @@ def EnemyMan(datas,x,y,fireTimeSpace):
 	@rtype: dict
 	"""
 
-	assert type(fireTimeSpace) is int or float
+#	assert type(fireTimeSpace) is int or float
 
-	object = Item.Item(datas,x,y,enemyColor)
-	object["fireTimeSpace"] = float(fireTimeSpace)
-	object["lastShot"] = 0
-	object["shotList"] = []
-	object["shotSpeed"] = 50
-	object["life"] = 100
+#	object = Item.Item(datas,x,y,enemyColor)
+#	object["fireTimeSpace"] = float(fireTimeSpace)
+#	object["lastShot"] = 0
+#	object["shotList"] = []
+#	object["shotSpeed"] = 50
+#	object["life"] = 100
 
-	return object
+#	return object
 
 def takeDamage(enemy,amount):
 	"""
@@ -172,7 +180,7 @@ def interact(enemy):
 	assertenemy(enemy)
 
 	if(time.time()-enemy["lastShot"] > enemy["fireTimeSpace"]):
-		enemy["shotList"].append(Shot.Shot(Object.getX(enemy)+Item.getBaseWidth(enemy),Object.getY(enemy)+int(Item.getBaseHeight(enemy)/2),enemy["shotSpeed"],False))
+		enemy["shotList"].append(Shot.Shot(Object.getX(enemy),Object.getY(enemy)+int(Item.getBaseHeight(enemy)/2),enemy["shotSpeed"],enemy["damageValue"]))
 		enemy["lastShot"] = time.time()
 
 
@@ -184,6 +192,8 @@ def interact(enemy):
 			del i
 
 	Item.move(enemy,dt)
+	if(enemy["moveFunction"] != None):
+		Object.setY(enemy,enemy["startY"]+eval(enemy["moveFunction"]))
 
 	return
 
@@ -242,6 +252,19 @@ def getShotSpeed(enemy):
 
 	return enemy["shotSpeed"]
 
+def getShotList(enemy):
+	"""
+	Get content of \"shotList\" key from \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"enemy\" object
+	@type enemy: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertenemy(enemy)
+
+	return enemy["shotList"]
+
 def getLife(enemy):
 	"""
 	Get content of \"life\" key from \"Enemy\"
@@ -255,6 +278,19 @@ def getLife(enemy):
 
 	return enemy["life"]
 
+
+def getDamageValue(enemy):
+	"""
+	Get content of \"damageValue\" key from \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"enemy\" object
+	@type enemy: dict
+
+	@return: -
+	@rtype: void
+	"""
+	assertenemy(enemy)
+
+	return enemy["damageValue"]
 
 
 ##########################
@@ -323,6 +359,44 @@ def setLife(enemy,value):
 
 	return
 
+
+def setMoveFunction(enemy,value):
+	"""
+	Get content of \"life\" key from \"Enemy\"
+	@param enemy: Dictionnary containing all information about one \"Enemy\" object
+	@type enemy: dict
+
+	@param value: new value for the content of \"life\" key from \"Enemy\"
+	@type value: float
+
+	@return: -
+	@rtype: void
+	"""
+	assert type(value) is str
+	assertenemy(enemy)
+
+	enemy["moveFunction"] = value
+
+	return
+
+def setDamageValue(enemy,value):
+	"""
+	Set content of \"damageValue\" key from \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"enemy\" object
+	@type enemy: dict
+
+	@param value: new value for the content of \"damageValue\" key from \"enemy\"
+	@type value: float
+
+	@return: -
+	@rtype: void
+	"""
+	assert type(value) is float or int
+	assertenemy(enemy)
+
+	enemy["damageValue"] = float(value)
+
+	return
 
 
 ##########################

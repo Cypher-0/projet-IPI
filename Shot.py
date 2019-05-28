@@ -5,8 +5,9 @@
 from PyTry import *
 import time
 
-attributesList = ["isEnnemy"]
+attributesList = ["isEnnemy","damageValue"]
 #isEnnemy : bool : is an ennemy fire
+#damageValue : float : how much damage the shot deal
 
 """
 \"Shot\" type attributes list
@@ -21,7 +22,7 @@ attributesList = ["isEnnemy"]
 
 shotColorFriendly = [255,0,255]
 
-def Shot(x,y,vX,isEnnemy = True,shotColor = [255,150,0]):
+def Shot(x,y,vX,damageValue,isEnnemy = True,shotColor = [255,150,0]):
 	"""
 	\"Shot\" type constructor
 	
@@ -44,9 +45,11 @@ def Shot(x,y,vX,isEnnemy = True,shotColor = [255,150,0]):
 	assert type(x) is float or int
 	assert type(y) is float or int
 	assert type(vX) is float or int
+	assert type(damageValue) is int or float
 
 	object = Item.Item([['*']],x,y,shotColor,vX)
 	object["isEnnemy"] = isEnnemy
+	object["damageValue"] = float(damageValue);
 
 	return object
 

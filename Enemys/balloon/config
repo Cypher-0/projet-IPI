@@ -1,9 +1,12 @@
-fireTimeSpace = 0.6
-shotSpeed = -40
+fireTimeSpace = 1
+shotSpeed = -20
 life = 30
 scoreValue = 30
+damageValue = 10
 startX = startX
 startY = startY
+moveAmp = float(randint(5,10))
+moveFunction = str(moveAmp)+"*sin(0.092*Object.getX(enemy))"
 vX = -8
 vY = 0
 aX = 0
