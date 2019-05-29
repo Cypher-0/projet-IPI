@@ -201,10 +201,11 @@ def interact(lvl):
 	# ----------- Manage enemys
 	for i in lvl["enemyList"]:
 		if(Object.getX(i) < -Item.getBaseWidth(i)):
+			Enemy.kill(i)
+		
+		if(Enemy.interact(i)): #if enemy dead and all his shots have disappeared
 			lvl["enemyList"].remove(i)
-		else:
-			Enemy.interact(i)
-	while(len(lvl["enemyList"]) < lvl["maxEnemysNumber"]):
+	while(countAliveEnemys(lvl) < lvl["maxEnemysNumber"]):
 		addEnemy(lvl)
 
 
@@ -228,7 +229,9 @@ def interact(lvl):
 					delPlayerShot(lvl,i)
 					#if enemy destroyed
 					if(Enemy.getLife(j) == 0):
-						lvl["enemyList"].remove(j)
+						lvl["playerScore"] += Enemy.getScoreValue(j)
+						#lvl["enemyList"].remove(j)
+						Enemy.kill(j)
 
 
 	#collisions btween enemys and ...
@@ -269,6 +272,25 @@ def addEnemy(lvl,name = None):
 		lvl["enemyList"].append(Enemy.Enemy(listNames[randint(0,len(listNames)-1)]))
 
 	return
+
+def countAliveEnemys(lvl):
+	"""
+	Count all enemys alive in the level
+
+	@param lvl: Dictionnary containing all information about one \"Level\" object
+	@type lvl: dict
+
+	@return: Number of enemys alive in the level
+	@rtype: int
+	"""
+	assertLevel(lvl)
+
+	total = 0
+	for i in lvl["enemyList"]:
+		if(not(Enemy.getIsDead(i))):
+			total += 1
+
+	return total
 
 def loadPlayer(saveName):
 	"""

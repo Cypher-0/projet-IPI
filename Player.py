@@ -139,6 +139,7 @@ def interact(player):
 
 	for i in player["shotList"]:
 		if(Object.getX(i) >= Object.SCREEN_WIDTH):
+			player["shotList"].remove(i)
 			del i
 
 	if(player["isImmute"]):

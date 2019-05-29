@@ -27,7 +27,7 @@ def init():
 	#Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
 	Tools.sysExec("python2.7 initTerm.py")
 
-	dtShow = 0.06
+	dtShow = 0.07
 
 	keyboard_default = KeyBinder.initKbStgs()
 

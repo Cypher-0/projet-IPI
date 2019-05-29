@@ -10,7 +10,7 @@ import sys
 from random import randint
 from math import sin
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scoreValue","moveFunction","startY","damageValue"]
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scoreValue","moveFunction","startY","damageValue","isDead"]
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the enemy. Each one is erase if it's out of the screen
@@ -21,6 +21,7 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scor
 #moveFunction : str : y = f(x)
 #startY : float : enemy start point on y axis
 #damageValue : float : how much damage per shot
+#isDead : bool : is the enemy dead or not ? Used to keep shots on screen even if enemy killed
 
 """
 \"Enemy\" type attributes list
@@ -80,6 +81,7 @@ def Enemy(enemyName,yPos = None):
 	object["damageValue"] = damageValue
 	object["moveFunction"] = moveFunction
 	object["startY"] = startY
+	object["isDead"] = False
 	#enemy position
 	Object.setX(object,startX)
 	if(yPos != None):
@@ -162,7 +164,7 @@ def assertenemy(enemy):
 	@return: -
 	@rtype: void
 	"""
-	assert type(enemy) is dict
+	assert type(enemy) is dict,"Current is : %r" % enemy
 	for i in range(0,len(attributesList)):
 		assert attributesList[i] in enemy.keys(),"\"Enemy\" type expect %r key."%attributesList[i]
 
@@ -174,12 +176,12 @@ def interact(enemy):
 	@param enemy: Dictionnary containing all information about one \"Enemy\" object
 	@type enemy: dict
 
-	@return: -
-	@rtype: void
+	@return: Have the enemy to be removed from the enemyList or not
+	@rtype: bool
 	"""
 	assertenemy(enemy)
 
-	if(time.time()-enemy["lastShot"] > enemy["fireTimeSpace"]):
+	if(time.time()-enemy["lastShot"] > enemy["fireTimeSpace"] and not(enemy["isDead"])):
 		enemy["shotList"].append(Shot.Shot(Object.getX(enemy),Object.getY(enemy)+int(Item.getBaseHeight(enemy)/2),enemy["shotSpeed"],enemy["damageValue"]))
 		enemy["lastShot"] = time.time()
 
@@ -189,11 +191,26 @@ def interact(enemy):
 
 	for i in enemy["shotList"]:
 		if(Object.getX(i) <= 0):
+			enemy["shotList"].remove(i)
 			del i
 
 	Item.move(enemy,dt)
 	if(enemy["moveFunction"] != None):
-		Object.setY(enemy,enemy["startY"]+eval(enemy["moveFunction"]))
+		nextY = enemy["startY"]+eval(enemy["moveFunction"])
+		if(nextY < Object.SCREEN_WIDTH-4 and nextY > 4):
+			Object.setY(enemy,nextY)
+	#Tools.prDly(str(enemy["isDead"])+";"+str(len(enemy["shotList"]) == 0),0.1)
+	return enemy["isDead"] and len(enemy["shotList"]) == 0
+
+def kill(enemy):
+	"""
+	Virtually kill \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"Enemy\" object
+	@type enemy: dict
+	"""
+	assertenemy(enemy)
+
+	enemy["isDead"] = True
 
 	return
 
@@ -215,7 +232,8 @@ def show(enemy):
 		Object.show(enemy["shotList"][i])
 	#sys.stdout.write("\033[0m")
 
-	Object.show(enemy)
+	if(not(enemy["isDead"])):
+		Object.show(enemy)
 
 	return
 
@@ -285,13 +303,38 @@ def getDamageValue(enemy):
 	@param enemy: Dictionnary containing all information about one \"enemy\" object
 	@type enemy: dict
 
-	@return: -
-	@rtype: void
+	@return: content of \"damageValue\" key from \"enemy\"
+	@rtype: float
 	"""
 	assertenemy(enemy)
 
 	return enemy["damageValue"]
 
+def getScoreValue(enemy):
+	"""
+	Get content of \"scoreValue\" key from \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"enemy\" object
+	@type enemy: dict
+
+	@return: content of \"scoreValue\" key from \"enemy\"
+	@rtype: float
+	"""
+	assertenemy(enemy)
+
+	return enemy["scoreValue"]
+
+def getIsDead(enemy):
+	"""
+	Get content of \"isDead\" key from \"enemy\"
+	@param enemy: Dictionnary containing all information about one \"enemy\" object
+	@type enemy: dict
+
+	@return: content of \"isDead\" key from \"enemy\"
+	@rtype: bool
+	"""
+	assertenemy(enemy)
+
+	return enemy["isDead"]
 
 ##########################
 #
