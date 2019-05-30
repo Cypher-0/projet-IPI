@@ -191,26 +191,25 @@ def interact(lvl):
 	baseWidth = Item.getBaseWidth(lvl["bgItem0"])
 	#place part 1 of the background after the part 0
 	if(x <= -baseWidth):
-		Object.setX(lvl["bgItem1"],baseWidth)
+		Object.setX(lvl["bgItem1"],baseWidth+Object.getX(lvl["bgItem0"]))
 
 	#place part 0 of the background after the part 1
 	x = Object.getX(lvl["bgItem0"])
 	if(x <= -baseWidth):
-		Object.setX(lvl["bgItem0"],baseWidth)
+		Object.setX(lvl["bgItem0"],baseWidth+Object.getX(lvl["bgItem1"]))
 
 
 
 	x = Object.getX(lvl["fgItem1"])
 	baseWidth = Item.getBaseWidth(lvl["fgItem0"])
-	#place part 1 of the background after the part 2
+	#place part 1 of the foreground after the part 2
 	if(x <= -baseWidth):
-		Object.setX(lvl["fgItem1"],baseWidth)
+		Object.setX(lvl["fgItem1"],baseWidth+Object.getX(lvl["fgItem0"])-1)
 
-	#place part 2 of the background after the part 1
+	#place part 2 of the foreground after the part 1
 	x = Object.getX(lvl["fgItem0"])
 	if(x <= -baseWidth):
-		Object.setX(lvl["fgItem0"],baseWidth)
-
+		Object.setX(lvl["fgItem0"],baseWidth+Object.getX(lvl["fgItem1"])-1)
 
 
 	Player.interact(lvl["playerItem"])

@@ -1,4 +1,4 @@
 fireTimeSpace = 0.5
 shotSpeed = 60
-life = 1#200
+life = 200
 damageValue = 15
