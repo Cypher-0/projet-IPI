@@ -15,7 +15,7 @@ from random import randint
 
 dt = Object.dt
 
-attributesList = ["levelName","bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","maxEnemysNumber","HUD","playerScore","scoreObjective"] #+Item.attributesList
+attributesList = ["levelName","bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","availableEnemys","maxEnemysNumber","HUD","playerScore","scoreObjective"] #+Item.attributesList
 "levelName"
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
 #fgItem0 : Item : foreGround of the level (part 1)
@@ -25,6 +25,7 @@ attributesList = ["levelName","bgItem0","bgItem1","fgItem0","fgItem1","playerIte
 #playerItem : Player : player avatar
 #keyBinder : KeyBinder : keybinder of a level
 #enemyList : list of ? : list of all ennemys
+#availableEnemys : list of str : list of all anemys available for the level
 #maxEnemysNumber : int : max number of enemys on screen
 #HUD : HUD : head up display for the player
 #playerScore : float : player's score
@@ -91,6 +92,7 @@ def Level(levelName,saveName):
 	exec(content)
 	object["scoreObjective"] = scoreObjective
 	object["maxEnemysNumber"] = maxEnemysNumber
+	object["availableEnemys"] = availableEnemys
 
 	for i in range(0,maxEnemysNumber):
 		addEnemy(object)
