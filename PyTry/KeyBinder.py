@@ -87,14 +87,6 @@ def assertKeyBinder(kb):
 
 	return True #return true if "kb" is a correct "KeyBinder" object
 
-def isData():#is keyboard data availables
-	"""
-	Test if keyboard data is available
-	@return: True if datas availables
-	@rtype: bool
-	"""
-	return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
-
 
 def interact(kb,clearBuffer = False): #<<main>> function to call every loop for every KeyBinder object. Keys test are in it
 	"""
@@ -131,6 +123,7 @@ def interact(kb,clearBuffer = False): #<<main>> function to call every loop for 
 
 def clearBuffer():
 	""" 
+	STATIC FUNCTION
 	Clear input buffer
 	@return: -
 	@rtype: void
@@ -207,6 +200,27 @@ def setName(kb,name):
 #	STATIC procedures
 #
 #################################################################
+
+def isData():#is keyboard data availables
+	"""
+	STATIC FUNCTION
+	Test if keyboard data is available
+	@return: True if datas availables
+	@rtype: bool
+	"""
+	return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+def clearBuffer():
+	""" 
+	STATIC PROCEDURE
+	Clear input buffer
+	@return: -
+	@rtype: void
+	"""
+
+	termios.tcflush(sys.stdin.fileno(),termios.TCIFLUSH)
+
+	return
 
 #this function have to be called at the beginning of the program
 def initKbStgs(): #return KeyBoard base Settings, to use in procedure restoreKbStgs at the end of the program

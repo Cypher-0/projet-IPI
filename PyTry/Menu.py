@@ -190,23 +190,33 @@ def addButton(menu,button):
 #
 ##########################
 
-def printScreen(filePath,vY = None):
+def printScreen(filePath,vY = None,prePrintOption = ""):
 	"""
 	STATIC PROCEDURE
 	Make a text from file appear on screen. By the top if vY specified.
 	@param filePath: Path to file containing informations to print on screen 
 	@type filePath: str
 
+	@param vY: Texte descent speed. Use None or 0 to instant appearance
+	@type vY: float
+
+	@param prePrintOption: This text will be printed on terminal before the text extract of the file. Use to set proprieties by ANSI code.
+	@type prePrintOption: str
+
 	@return: -
 	@rtype: void
 	"""
 	assert vY == None or type(vY) is int or float
+	assert type(prePrintOption) is str
 
-	screenObject = Item.Item(Tools.createDatasFromPic(filePath))
+	screenObject = Item.Item(Tools.createDatasFromPic(filePath,True))
 	dt = Object.dt
+	if(prePrintOption != ""):
+		sys.stdout.write("\033[1;1H"+prePrintOption)
 
-	if(vY == None):
+	if(vY == None or vY == 0):
 		Object.show(screenObject)
+		print("")
 	else:
 		assert vY > 0
 		Item.setVY(screenObject,float(vY))
@@ -216,6 +226,7 @@ def printScreen(filePath,vY = None):
 			Tools.clearScreen()
 			Item.move(screenObject,dt)
 			Object.show(screenObject)
+			print("")
 			time.sleep(dt*2)
 	sys.stdout.write("\033[1;1H")
 
@@ -254,6 +265,7 @@ def getButtonAt(menu,index):
 #if(__name__ == "__main__"):
 #	Tools.sysExec("clear")
 #	dfltstgs = KeyBinder.initKbStgs()
-#	printScreen("screenTextTest",20)
+#	screenObject = Item.Item(Tools.createDatasFromPic("player.pic",True))
+#	printScreen("player.pic",3)
 #	KeyBinder.waitForKeyPressed()
 #	KeyBinder.restoreKbStgs(dfltstgs)

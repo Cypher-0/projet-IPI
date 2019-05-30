@@ -21,6 +21,8 @@ keyboard_default = None
 SCREEN_WIdtShowH = 166
 SCREEN_HEIGHT = 48
 
+currentScene = 1
+
 def init():
 	global dtShow,keyboard_default,kb_global
 
@@ -49,8 +51,10 @@ def quit():
 	return 
 
 def live():
-	global dtShow
-	Level.interact(prov)
+	global dtShow,currentScene
+	if(currentScene == 1):
+		if(Level.interact(prov) != 0):
+			currentScene = 0
 	KeyBinder.interact(kb_global)
 
 	return 
@@ -65,7 +69,8 @@ def show():
 
 	#affichage des different element
 	#Object.show(obj)
-	Level.show(prov)
+	if(currentScene == 1):
+		Level.show(prov)
 
 	#deplacement curseur
 	sys.stdout.write("\033[0;0H\n")

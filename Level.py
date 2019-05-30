@@ -165,6 +165,17 @@ def interact(lvl):
 
 	if(lvl["playerScore"] >= lvl["scoreObjective"]):
 		time.sleep(0.7)
+		KeyBinder.clearBuffer()
+		Menu.printScreen("Pictures/winText.pic",45,"\033[1;92m")
+		KeyBinder.waitForKeyPressed()
+		return 2
+
+	if(Player.getLife(lvl["playerItem"]) <= 0):
+		time.sleep(0.7)
+		KeyBinder.clearBuffer()
+		Menu.printScreen("Pictures/loseText.pic",45,"\033[1;31;7;5m")
+		KeyBinder.waitForKeyPressed()
+		return 1
 
 
 	KeyBinder.interact(lvl["keyBinder"])
