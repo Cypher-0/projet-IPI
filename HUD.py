@@ -104,6 +104,8 @@ def refreshValues(hud,life,score):
 
 	sys.stdout.write("\033[1m")
 	ProgressBar.setProgressionPercent(hud["pbLife"],int(round(100*life/hud["playerMaxLife"])))
+	if(int(round(100*score/hud["scoreObjective"])) > 100):
+		Tools.prDly(str(int(round(100*score/hud["scoreObjective"])))+";"+str(score)+";"+str(hud["scoreObjective"])+";"+str(score/hud["scoreObjective"]))
 	ProgressBar.setProgressionPercent(hud["pbLevel"],int(round(100*score/hud["scoreObjective"])))
 
 	return

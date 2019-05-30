@@ -70,9 +70,7 @@ def Level(levelName,saveName):
 
 	playerItem = loadPlayer(saveName)
 
-	hud = HUD.HUD(2000,Player.getMaxLife(playerItem))
-
-	object = {"levelName":levelName,"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":[],"HUD":hud,"playerScore":0}
+	object = {"levelName":levelName,"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":[],"playerScore":0}
 
 	kb = KeyBinder.KeyBinder(levelName[levelName.rfind("/")+1:])
 	KeyBinder.addAction(kb,"z",movePlayerUp,object)
@@ -93,6 +91,9 @@ def Level(levelName,saveName):
 	object["scoreObjective"] = scoreObjective
 	object["maxEnemysNumber"] = maxEnemysNumber
 	object["availableEnemys"] = availableEnemys
+
+	hud = HUD.HUD(scoreObjective,Player.getMaxLife(playerItem))
+	object["HUD"] = hud
 
 	for i in range(0,maxEnemysNumber):
 		addEnemy(object)
@@ -231,8 +232,7 @@ def interact(lvl):
 					delPlayerShot(lvl,i)
 					#if enemy destroyed
 					if(Enemy.getLife(j) == 0):
-						lvl["playerScore"] += Enemy.getScoreValue(j)
-						#lvl["enemyList"].remove(j)
+						addPlayerScore(lvl,Enemy.getScoreValue(j))
 						Enemy.kill(j)
 
 
@@ -271,7 +271,9 @@ def addEnemy(lvl,name = None):
 	if(name == None):
 		#if no name specified, random choice
 		listNames = os.listdir("./Enemys/")
-		lvl["enemyList"].append(Enemy.Enemy(listNames[randint(0,len(listNames)-1)]))
+		enemyName = listNames[randint(0,len(listNames)-1)]
+		if(enemyName in lvl["availableEnemys"]):
+			lvl["enemyList"].append(Enemy.Enemy(enemyName))
 
 	return
 
@@ -393,6 +395,15 @@ def movePlayerUp(lvl):
 
 	return
 
+
+##########################
+#
+#	PRIVATE Procedures
+#	
+##########################
+
+#do note use these functions out of this module
+
 def delPlayerShot(lvl,shot):
 	"""
 	Private function to securise player's shots delete
@@ -410,30 +421,24 @@ def delPlayerShot(lvl,shot):
 	if(shot in ls):
 		ls.remove(shot)
 
-	return 
+	return
 
-
-
-
-def showBackground(level,bg):
+def addPlayerScore(lvl,value):
 	"""
-	Optimize Object.show() for background and foreground objects
-	@param level: Dictionnary containing all information about one \"Level\" object
-	@type level: dict
+	Private function to increase player's score
+
+	@param lvl: Dictionnary containing all information about one \"Level\" object
+	@type lvl: dict
+
+	@param value: how many points to add to player's score
+	@type value: float
 
 	@return: -
 	@rtype: void
 	"""
+	assert type(value) is int or float
 
-	temp = Object.getDatas(bg)
-	tempstr= ""
-	X = abs(Object.getX(bg))
-	for i in range(0,len(temp)): #on parcourt l'axe Y du tableau
-		tempstr+="".join(map(str,temp[i][int(X):int(Object.SCREEN_WIDTH-X)]))+"\n"
-		#Tools.prDly(tempstr)
-	Tools.goAt(0,0)
-	sys.stdout.write(tempstr)
-
+	lvl["playerScore"] = lvl["scoreObjective"] if(lvl["playerScore"]+value > lvl["scoreObjective"]) else lvl["playerScore"]+value
 
 	return
 
