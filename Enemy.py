@@ -202,7 +202,7 @@ def interact(enemy):
 	Item.move(enemy,dt)
 	if(enemy["moveFunction"] != None):
 		nextY = enemy["startY"]+eval(enemy["moveFunction"])
-		if(nextY < Object.SCREEN_HEIGHT-6 and nextY > 4):
+		if(nextY < Object.SCREEN_HEIGHT-5 and nextY >= 0):
 			Object.setY(enemy,nextY)
 
 	return enemy["isDead"] and len(enemy["shotList"]) == 0

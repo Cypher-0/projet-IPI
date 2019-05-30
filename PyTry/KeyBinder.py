@@ -1,7 +1,7 @@
 ﻿
 
 """
-File containing definition of type "KeyBinder" used to link a key and a function
+File containing definition of type "KeyBinder" used to manage interactions between keyboard and program
 """
 #used to link keyboard event and functions
 
@@ -204,13 +204,14 @@ def setName(kb,name):
 
 #################################################################
 #
-#	Independants procedures
+#	STATIC procedures
 #
 #################################################################
 
 #this function have to be called at the beginning of the program
 def initKbStgs(): #return KeyBoard base Settings, to use in procedure restoreKbStgs at the end of the program
 	"""
+	STATIC PROCEDURE
 	Initialize keyboard settings to be able to interact with user
 	@return: tty default settings (used to be restored at the end of the program)
 	@rtype: list
@@ -222,6 +223,7 @@ def initKbStgs(): #return KeyBoard base Settings, to use in procedure restoreKbS
 #this function have to be called at the end of the program
 def restoreKbStgs(old_settings): #restore KeyBoard Settings
 	"""
+	STATIC PROCEDURE
 	Restore default keyboard settings using the result of \"initKbStgs()\"
 	@param old_settings: result of \"initKbStgs()\" used at the beginning of the program. Parameters to restore.
 	@type old_settings: list
@@ -229,3 +231,25 @@ def restoreKbStgs(old_settings): #restore KeyBoard Settings
 	@rtype: void
 	"""
 	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+
+def waitForKeyPressed(key = None):
+	"""
+	STATIC PROCEDURE
+	Don't do anything while a key corresponding to \"key\" is not pressed
+	@param key: Is the key pressed \"key\". None <=> any key will work
+	@type key: str
+
+	@return: -
+	@rtype: void
+	"""
+	while True:
+		if(isData()):
+			if(key != None):
+				if(sys.stdin.read(1) == key):
+					clearBuffer()
+					return
+			else:
+				clearBuffer()
+				return
+
+	return

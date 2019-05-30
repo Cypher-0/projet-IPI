@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>PyTry.Button</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;PyTry ::
+        Module&nbsp;Button
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="PyTry.Button-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="PyTry.Button-module.html">Module PyTry.Button</a></h1>
+<pre class="py-src">
+&#65279;# -*- coding: utf-8 -*-
+#this type inherit of Item type (Item.py) proprieties
+"""
+File containing definition of type \"Button\" used for things like menus
+"""
+
+import Tools
+import Object
+import Item
+
+import copy
+import sys
+
+attributesList = ["datas","x","y","width","height","color","vX","vY","aX","aY","sprites","text","selectedColor","state","function"]
+#text : str : Button text
+#state : int : button state : 0 => normal; 1 => selected
+#selectedColor : list : color list (rgb) corresponding to bg color when selected (only applied on frame) or pressed (applied everywhere)
+        #button background is object sprite[0]
+        #button frame is object sprite[1]
+        #button text is object sprite[2]
+#function : function : function associated to the button
+
+
+"""
+\"Button\" type attributes list
+@type: list
+"""
+
+##########################
+#
+#       Constructor
+#
+##########################
+
+def Button(txt,x,y,func = None,width = None,height = None):
+
+        """
+        \"Button\" type constructor
+        @param txt: Text displayed in the button
+        @type txt: str
+
+        @param x: Button x position on screen | set to -1 to center on screen
+        @type x: float
+
+        @param y: Button y position on screen | set to -1 to center on screen
+        @type y: float
+
+        @param func: Function associated to the Button
+        @type func: function
+        
+        @param width: Button width (num of characters) Automatically defined by text length
+        @type width: int
+
+        @param height: Button height (num of characters) Automatically defined by number of lines in "text"
+        @type height: int
+
+        @return: dictionnary containing all informations of created object
+        @rtype: dict
+        """
+
+        txt = str(txt)
+        assert type(width) is int or width == None
+        assert type(height) is int or height == None
+
+        maxLen = 0
+        tempList = txt.split('\n')
+        #calc max text width
+        for i in range(0,len(tempList)):
+                if(maxLen < len(tempList[i])):
+                        maxLen = len(tempList[i])
+
+        #calc width and height
+        if(width == None):
+                width = maxLen+4
+        else :
+                width = width
+        if(height == None):
+                height = len(tempList)+2
+        else :
+                height = height
+
+        dataBackground = []
+        dataFrame = []
+
+        tempList = []
+        #create empty background
+        for i in range(0,height):
+                tempList = []
+                for j in range(0,width):
+                        tempList.append(" ")
+                dataBackground.append(tempList)
+        dataBackground = copy.deepcopy(dataBackground)
+
+        tempList = []
+        #create frame
+        for i in range(0,height):
+                tempList2 = []
+                for j in range(0,width):
+                        if(i == 0 or i == height-1): #if on first line or last one
+                                tempList2.append('-')
+                        else:
+                                tempList2.append(' ')
+                tempList2[0] = '|' #change column 0
+                tempList2[width-1] = '|' #change last column
+                tempList.append(tempList2)
+        #replace angles
+        tempList[0][0] = '+'
+        tempList[0][width-1] = '+'
+        tempList[height-1][width-1] = '+'
+        tempList[height-1][0] = '+'
+
+        dataFrame = copy.deepcopy(tempList)
+
+        #test if object have to be in the center of the screen
+        SCREEN_WIDTH,SCREEN_HEIGHT = Tools.getTerminalSize()
+        if(x == -1):
+                x = (SCREEN_WIDTH/2.)-(width/2.)
+        if(y == -1):
+                y = (SCREEN_HEIGHT/2.)-(height/2.)
+
+        baseObject = Item.Item(dataBackground,x,y)
+        Item.addSprite(baseObject,dataFrame)
+
+        Item.addSprite(baseObject,[list(txt)])
+
+        baseObject["text"] = txt
+        baseObject["selectedColor"] = [30,30,200]
+        baseObject["state"] = 0
+        baseObject["function"] = func
+
+        return baseObject
+
+##########################
+#
+#       Procedures
+#       
+##########################
+
+def assertButton(button):
+        """
+        Assert button is at least corresponding to \"Button\" type criterias
+        @param button: object to test
+        @type button: dict
+        @return: True if correct \"Button\" type. The procedure stop if it's not
+        @rtype: bool
+        """
+        assert type(button) is dict
+        for i in range(0,len(attributesList)):
+                assert attributesList[i] in button.keys(),"\"Button\" type expect %r key."%attributesList[i]
+
+        return True #return true if "object" is a correct "Button"
+
+def show(button):
+        """
+        Show button \"button\" on terminal screen
+        @param button: Dictionnary containing all information about one Button object
+        @type button: dict
+        @return: -
+        @rtype: void
+        """
+        Object.show(button,True)#print background
+
+        Item.setSprite(button,1)#select frame sprite
+        tempStr = ""
+        if(button["state"] == 1): #if button selected
+                tempStr+=('\033[5m')
+                tempStr+=('\033[48;2;'+str(button["selectedColor"][0])+';'+str(button["selectedColor"][1])+';'+str(button["selectedColor"][2])+'m')
+                sys.stdout.write(tempStr)
+        Object.show(button)#print selected sprite
+        sys.stdout.write('\033[0m') #reset color parameters
+
+        X = Object.getX(button)
+        Y = Object.getY(button)
+        Item.setSprite(button,2)#select text sprite
+        Object.setX(button,X+(Item.getBaseWidth(button)/2.)-(len(button["text"])/2.))
+        Object.setY(button,Y+int(Item.getBaseHeight(button)/2))
+        Object.show(button)
+        Object.setX(button,X)
+        Object.setY(button,Y)
+
+        Item.setSprite(button,0) #change item sprite to background
+
+        sys.stdout.write('\033[0m') #reset color parameters
+
+        button["state"] = 0
+
+        return
+
+##########################
+#
+#       Getters
+#
+##########################
+
+def getState(button):
+        """
+        Get button \"state\" attribute value : 0-Unselected | 1-Selected
+        @param button: object of type \"Button\"
+        @type button: dict
+        @return: \"button\" state
+        @rtype: int
+        """
+        assertButton(button)
+
+        return button["state"]
+
+def getFunc(button):
+        """
+        Get button \"function\" attribute value : function to call on button activated
+        @param button: object of type \"Button\"
+        @type button: dict
+        @return: \"button\" linked function
+        @rtype: function
+        """
+        assertButton(button)
+        return button["function"]
+
+##########################
+#
+#       Setters
+#
+##########################
+
+def setState(button,state):
+        """
+        Set button \"state\" attribute value : 0-Unselected | 1-Selected
+        @param button: object of type \"Button\"
+        @type button: dict
+        @param state: new \"state\" attribute value of \"button\"
+        @type state: int
+        @return: -
+        @rtype: void
+        """
+        assertButton(button)
+
+        button["state"] = state
+        return
+
+def setSelectedColor(button,color):
+        """
+        Set \"selectedColor\" attribute value of button \"button\"
+        @param button: object of type \"Button\"
+        @type button: dict
+        @param color: New color of the selected button's frame defined by the following format : [r,g,b]. Each value have to be in [0;255]
+        @type color: list
+        @return: -
+        @rtype: void
+        """
+        assert type(color) is list #PERFORMANCE  --> comment this line to increase performances (use carefully)
+        for i in range(0,3): #PERFORMANCE  --> comment this line to increase performances (use carefully)
+                assert type(color[i]) is int 
+                assert color[i] >= 0 and color[i] < 256,"color[%r] have to be in [0,255]" % i #assert every colors are in [0;255]
+        assertButton(button) #PERFORMANCE  --> comment this line to increase performances (use carefully)
+        
+        button["selectedColor"] = color
+
+        return
+<script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Thu May 30 16:05:52 2019
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

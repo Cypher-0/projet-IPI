@@ -157,11 +157,15 @@ def interact(lvl):
 	@param lvl: Dictionnary containing all information about one \"Level\" object
 	@type lvl: dict
 
-	@return: -
-	@rtype: void
+	@return: Code corresponding to level state : -1=Error; 0=In progress ; 1=Lose ; 2=Win 
+	@rtype: int
 	"""
 
 	assertLevel(lvl)
+
+	if(lvl["playerScore"] >= lvl["scoreObjective"]):
+		time.sleep(0.7)
+
 
 	KeyBinder.interact(lvl["keyBinder"])
 
@@ -249,7 +253,7 @@ def interact(lvl):
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
 
-	return
+	return 0
 
 def addEnemy(lvl,name = None):
 	"""
@@ -406,6 +410,7 @@ def movePlayerUp(lvl):
 
 def delPlayerShot(lvl,shot):
 	"""
+	PRIVATE FUNCTION
 	Private function to securise player's shots delete
 
 	@param lvl: Dictionnary containing all information about one \"Level\" object
@@ -425,6 +430,7 @@ def delPlayerShot(lvl,shot):
 
 def addPlayerScore(lvl,value):
 	"""
+	PRIVATE FUNCTION
 	Private function to increase player's score
 
 	@param lvl: Dictionnary containing all information about one \"Level\" object

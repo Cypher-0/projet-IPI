@@ -2,12 +2,16 @@
 
 """
 File containing definition of type \"Menu\" used to defined menus containing only buttons
+And statics procedures used to print pass screen
 """
 import Button
 import KeyBinder
+import Item
+import Object
 
 import sys
 import Tools
+import time
 
 attributesList = ["title","keyBinder","buttonList","currentIndex","lastIndex"]
 #title : str : this string will be displayed at the top of the screen as a "title" for the menu
@@ -182,6 +186,43 @@ def addButton(menu,button):
 
 ##########################
 #
+#	STATIC Procedures
+#
+##########################
+
+def printScreen(filePath,vY = None):
+	"""
+	STATIC PROCEDURE
+	Make a text from file appear on screen. By the top if vY specified.
+	@param filePath: Path to file containing informations to print on screen 
+	@type filePath: str
+
+	@return: -
+	@rtype: void
+	"""
+	assert vY == None or type(vY) is int or float
+
+	screenObject = Item.Item(Tools.createDatasFromPic(filePath))
+	dt = Object.dt
+
+	if(vY == None):
+		Object.show(screenObject)
+	else:
+		assert vY > 0
+		Item.setVY(screenObject,float(vY))
+		Object.setY(screenObject,-Item.getBaseHeight(screenObject))
+		
+		while(Object.getY(screenObject) < 0):
+			Tools.clearScreen()
+			Item.move(screenObject,dt)
+			Object.show(screenObject)
+			time.sleep(dt*2)
+	sys.stdout.write("\033[1;1H")
+
+	return
+
+##########################
+#
 #	Getters
 #
 ##########################
@@ -202,3 +243,17 @@ def getButtonAt(menu,index):
 	assert type(index) is int
 	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
 	return menu["buttonList"][i]
+
+
+##########################
+#
+#	internal tests
+#
+##########################
+
+#if(__name__ == "__main__"):
+#	Tools.sysExec("clear")
+#	dfltstgs = KeyBinder.initKbStgs()
+#	printScreen("screenTextTest",20)
+#	KeyBinder.waitForKeyPressed()
+#	KeyBinder.restoreKbStgs(dfltstgs)

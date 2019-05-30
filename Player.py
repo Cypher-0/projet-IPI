@@ -52,7 +52,7 @@ def Player(datas,x,y,fireTimeSpace,maxLife = 200):
 	@type y: float
 
 	@param fireTimeSpace: time between two shots fire
-	@type type: float
+	@type fireTimeSpace: float
 
 	@return: Dictionnary containing all informations about player
 	@rtype: dict
@@ -128,8 +128,8 @@ def giveImmute(player,timeL):
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
-	@param time: Player immunity time
-	@type time: float
+	@param timeL: Player immunity time
+	@type timeL: float
 
 	@return: -
 	@rtype: void
