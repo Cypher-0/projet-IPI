@@ -8,13 +8,14 @@ import Shot
 import time
 import sys
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immuteTime","lastDmgTime","isImmute","damageValue"]#+item
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","maxLife","immuteTime","lastDmgTime","isImmute","damageValue"]#+item
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
 #shotSpeed : float : player's shot speed on screen
 
-#life : float : player's life [0;100]
+#life : float : player's life min=0
+#maxLife : float : player's life max value
 
 #immuteTime : float : Player can't take damage during this time from "lastDmgTime"
 #lastDmgTime : float : player last damage time, used to calculate immunity time
@@ -26,10 +27,9 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","immu
 @type: list
 """
 
-MAX_LIFE = 100
-
 dt = Object.dt
 """dt used in calcs"""
+
 ##########################
 #
 #	Constructor
@@ -38,7 +38,7 @@ dt = Object.dt
 
 playerColor = [255,0,0]
 
-def Player(datas,x,y,fireTimeSpace):
+def Player(datas,x,y,fireTimeSpace,maxLife = 200):
 	"""
 	\"Player\" type constructor
 
@@ -62,7 +62,8 @@ def Player(datas,x,y,fireTimeSpace):
 	object["lastShot"] = 0
 	object["shotList"] = []
 	object["shotSpeed"] = 50
-	object["life"] = 100
+	object["life"] = maxLife
+	object["maxLife"] = maxLife
 
 	object["immuteTime"] = 1
 	object["lastDmgTime"] = 0
@@ -70,32 +71,6 @@ def Player(datas,x,y,fireTimeSpace):
 	object["damageValue"] = 0
 
 	return object
-
-def takeDamage(player,amount):
-	"""
-	Inflict \"amount\" damages to \"player\"
-	@param player: Dictionnary containing all information about one \"Player\" object
-	@type player: dict
-
-	@param amount: amount of damage to apply
-	@type amount: float
-
-	@return: -
-	@rtype: void
-	"""
-
-	assertPlayer(player)
-
-	if(player["isImmute"] == True):
-		return
-
-	assert type(amount) is int or type(amount) is float
-
-	player["life"] -= amount
-	if(player["life"] < 0):
-		player["life"] = 0
-
-	return
 
 
 ##########################
@@ -166,6 +141,32 @@ def giveImmute(player,timeL):
 	return
 
 
+def takeDamage(player,amount):
+	"""
+	Inflict \"amount\" damages to \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param amount: amount of damage to apply
+	@type amount: float
+
+	@return: -
+	@rtype: void
+	"""
+
+	assertPlayer(player)
+
+	if(player["isImmute"] == True):
+		return
+
+	assert type(amount) is int or type(amount) is float
+
+	player["life"] -= amount
+	if(player["life"] < 0):
+		player["life"] = 0
+
+	return
+
 def show(player):
 	"""
 	Display player and his fires
@@ -234,6 +235,19 @@ def getLife(player):
 	assertPlayer(player)
 
 	return player["life"]
+
+def getMaxLife(player):
+	"""
+	Get content of \"maxLife\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: content of \"maxLife\" key from \"player\"
+	@rtype: float
+	"""
+	assertPlayer(player)
+
+	return player["maxLife"]
 
 def getShotList(player):
 	"""
@@ -310,7 +324,7 @@ def setShotSpeed(player,value):
 
 def setLife(player,value):
 	"""
-	Get content of \"life\" key from \"player\"
+	Set content of \"life\" key from \"player\"
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
@@ -321,10 +335,30 @@ def setLife(player,value):
 	@rtype: void
 	"""
 	assert type(value) is float or int
-	assert value >= 0 and value <= MAX_LIFE,"Life out of range"
 	assertPlayer(player)
+	assert value >= 0 and value <= player["maxLife"],"Life out of range"
 
 	player["life"] = float(value)
+
+	return
+
+def setMaxLife(player,value):
+	"""
+	Set content of \"maxLife\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param value: new value for the content of \"maxLife\" key from \"player\"
+	@type value: float
+
+	@return: -
+	@rtype: void
+	"""
+	assert type(value) is float or int
+	assert value >= 0
+	assertPlayer(player)
+
+	player["maxLife"] = float(value)
 
 	return
 

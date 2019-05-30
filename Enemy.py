@@ -7,6 +7,7 @@ import Shot
 
 import time
 import sys
+import random
 from random import randint
 from math import sin
 
@@ -28,7 +29,11 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scor
 @type: list
 """
 
+RAND_INTERVAL  = 30
+"""Enemy caracteristics can be +- RAND_INTERVAL % """
+
 dt = Object.dt
+"""dt used in calcs"""
 
 ##########################
 #
@@ -74,11 +79,11 @@ def Enemy(enemyName,yPos = None):
 
 #datas loaded from "exec" command
 	#enemy proprieties
-	object["fireTimeSpace"] = fireTimeSpace
-	object["shotSpeed"] = shotSpeed
+	object["fireTimeSpace"] = fireTimeSpace+random.random()*RAND_INTERVAL/100*fireTimeSpace
+	object["shotSpeed"] = shotSpeed+random.random()*RAND_INTERVAL/100*shotSpeed
 	object["life"] = life
 	object["scoreValue"] = scoreValue
-	object["damageValue"] = damageValue
+	object["damageValue"] = damageValue+random.random()*RAND_INTERVAL/100*damageValue
 	object["moveFunction"] = moveFunction
 	object["startY"] = startY
 	object["isDead"] = False
@@ -88,10 +93,10 @@ def Enemy(enemyName,yPos = None):
 		startY = yPos
 	Object.setY(object,startY)
 	#enemy speed and acceleration
-	Item.setVX(object,vX)
-	Item.setVY(object,vY)
-	Item.setAX(object,aX)
-	Item.setAY(object,aY)
+	Item.setVX(object,vX+random.random()*RAND_INTERVAL/100*vX)
+	Item.setVY(object,vY+random.random()*RAND_INTERVAL/100*vY)
+	Item.setAX(object,aX+random.random()*RAND_INTERVAL/100*aX)
+	Item.setAY(object,aY+random.random()*RAND_INTERVAL/100*aY)
 
 	return object
 
@@ -197,9 +202,9 @@ def interact(enemy):
 	Item.move(enemy,dt)
 	if(enemy["moveFunction"] != None):
 		nextY = enemy["startY"]+eval(enemy["moveFunction"])
-		if(nextY < Object.SCREEN_WIDTH-4 and nextY > 4):
+		if(nextY < Object.SCREEN_HEIGHT-6 and nextY > 4):
 			Object.setY(enemy,nextY)
-	#Tools.prDly(str(enemy["isDead"])+";"+str(len(enemy["shotList"]) == 0),0.1)
+
 	return enemy["isDead"] and len(enemy["shotList"]) == 0
 
 def kill(enemy):

@@ -69,7 +69,7 @@ def Level(levelName,saveName):
 
 	playerItem = loadPlayer(saveName)
 
-	hud = HUD.HUD(2000,Player.MAX_LIFE)
+	hud = HUD.HUD(2000,Player.getMaxLife(playerItem))
 
 	object = {"levelName":levelName,"bgItem0":bgItem0,"bgItem1":bgItem1,"fgItem0":fgItem0,"fgItem1":fgItem1,"playerItem":playerItem,"keyBinder":None,"enemyList":[],"HUD":hud,"playerScore":0}
 
@@ -303,8 +303,6 @@ def loadPlayer(saveName):
 	@rtype: dict
 	"""
 	assert type(saveName) is str
-
-	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5)
 	
 	file = open("Saves/"+saveName+"/player.stats","r")
 	content = file.read()
@@ -312,9 +310,10 @@ def loadPlayer(saveName):
 
 	exec(content)
 
+	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5,life)
+	
 	Player.setFireTimeSpace(playerItem,fireTimeSpace)
 	Player.setShotSpeed(playerItem,shotSpeed)
-	Player.setLife(playerItem,life)
 	Player.setDamageValue(playerItem,damageValue)
 
 

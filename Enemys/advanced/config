@@ -1,6 +1,6 @@
-fireTimeSpace = 0.6
+fireTimeSpace = 0.4
 shotSpeed = -50
-life = 30
+life = 10
 scoreValue = 30
 damageValue = 5
 startX = startX
