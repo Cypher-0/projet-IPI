@@ -7,35 +7,53 @@ import time
 import sys
 import subprocess
 
-dtShow = None
+dtShow = 0.07
+"""dt used to refresh the screen """
 dtCalc = Object.dt
+"""dt used in calcs """
 
 saveName = "1"
+"""Loaded save name """
 
-kb_global = KeyBinder.KeyBinder("global")
-obj = Item.Item(Tools.createDatasFromPic("Levels/l0/background.pic"),0,0,[0,255,0],-5)
-prov = Level.Level("l0",saveName)
+keyboard_default = None #var to save keyboard settings
+"""Var used to save keyboard settings"""
 
-keyboard_default = None
+currentScene = 0
+"""Current scene displayed and calculated """
+sceneId = {"Start Menu":0,"Select save":1,"level":2}
+"""Id corresponding to each scene"""
 
-SCREEN_WIdtShowH = 166
-SCREEN_HEIGHT = 48
+menuList = []
+"""Menu list containing all possibles menus"""
 
-currentScene = 1
+currentLevel = None
+"""Level played (dict <=> type Level)"""
 
 def init():
 	global dtShow,keyboard_default,kb_global
 
-	#Tools.resizeTerminal(SCREEN_WIDTH,SCREEN_HEIGHT)
-	Tools.sysExec("python2.7 initTerm.py")
-
-	dtShow = 0.07
+	Tools.sysExec("python2.7 initTerm.py") #init terminal size
 
 	keyboard_default = KeyBinder.initKbStgs()
 
-	KeyBinder.addAction(kb_global,'ESC',quit) #ajout d'une action au KeyBinder
+	#--------------------------- Menus
+	#Start Menu
+	menuList.append(Menu.Menu("Start Menu"))
+	Menu.addButton(menuList[0],Button.Button("START",-1,15,setSceneToSelectSave))
+	Menu.addButton(menuList[0],Button.Button("AIDE",-1,30,onHelpPressed))
 
-	return 0
+	#Select save menu
+	menuList.append(Menu.Menu("Select save"))
+	Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42))
+
+	for i in range(0,len(menuList)):
+		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'ESC',quit) #Add help action to each menu
+		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'?',onHelpPressed)
+
+	#level
+	loadLevel("0","1")
+
+	return 
 
 def quit():
 	global keyboard_default
@@ -48,34 +66,54 @@ def quit():
 
 	sys.exit()
 
-	return 
+	return
+
+
+
+
 
 def live():
-	global dtShow,currentScene
-	if(currentScene == 1):
-		if(Level.interact(prov) != 0):
-			currentScene = 0
-	KeyBinder.interact(kb_global)
+	global dtShow,currentScene,sceneId,currentLevel
+
+	#KeyBinder.interact(kb_global)
+
+	if(currentScene == sceneId["level"]):
+		if(currentLevel != None):
+			if(Level.interact(currentLevel) != 0):
+				currentLevel = None
+				currentScene = 0
+	
+	elif(currentScene == sceneId["Start Menu"]):
+		Menu.interact(menuList[0])
+	elif(currentScene == sceneId["Select save"]):
+		Menu.interact(menuList[1])
 
 	return 
 
-def show():
-	global SCREEN_WIDTH,SCREEN_HEIGHT
 
-	#on clear la console et on réinitialise le curseur
-	#sys.stdout.write("\033[1;1H")
-	#sys.stdout.write("\033[2J")
+
+
+
+def show():
+	global SCREEN_WIDTH,SCREEN_HEIGHT,currentScene,menuList,currentLevel
+
 	Tools.sysExec("clear")
 
-	#affichage des different element
-	#Object.show(obj)
-	if(currentScene == 1):
-		Level.show(prov)
+	if(currentScene == sceneId["level"]):
+		if(currentLevel != None):
+			Level.show(currentLevel)
+	elif(currentScene == sceneId["Start Menu"]):
+		Menu.show(menuList[0])
+	elif(currentScene == sceneId["Select save"]):
+		Menu.show(menuList[1])
 
-	#deplacement curseur
 	sys.stdout.write("\033[0;0H\n")
 
 	return 
+
+
+
+
 
 def main():
 	global kb_global,keyboard_default
@@ -87,8 +125,8 @@ def main():
 	lastTimeShow = 0
 	lastTimeCalc = 0
 
-	#70
-	while(i < 25000):
+
+	while(True):
 
 		if(time.time()-lastTimeCalc > dtCalc):
 			live()
@@ -97,15 +135,82 @@ def main():
 		if(time.time()-lastTimeShow > dtShow):
 			show()
 			lastTimeShow = time.time()
-			#Tools.prDly("SALUT")
-		#time.sleep(Level.dtShow)
-		
-
-		#i+=1
 
 	quit()
 
 	return 0
+
+
+
+
+def loadLevel(name,currentSave):
+	"""
+	@param name: Name of the level to load
+	@type name: str
+
+	@param currentSave: Current save loaded
+	@type currentSave: str
+
+	@return: -
+	@rtype: void
+	"""
+	global currentLevel
+	assert type(name) is str
+	assert type(currentSave) is str
+
+	currentLevel = Level.Level(name,currentSave)
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',quit) #Add quit action to keybinder
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'?',onHelpPressed) #Add help action to keybinder
+
+
+	return
+
+def onHelpPressed():
+	"""
+	Function called when a button "Aide" is pressed or key '?'
+	@return: -
+	@rtype: void
+	"""
+	Tools.sysExec("clear")
+
+	#menu help
+	if(currentScene == sceneId["Start Menu"]):
+		Menu.printScreen("helpFiles/"+"StartMenu")
+	elif(currentScene == sceneId["Select save"]):
+		Menu.printScreen("helpFiles/"+"SelectSave")
+	elif(currentScene == sceneId["level"]):
+		Menu.printScreen("helpFiles/"+"level")
+	else:
+		return
+
+
+	KeyBinder.waitForKeyPressed()
+
+	return
+
+def setSceneToStartMenu():
+	"""
+	Set current scene to the menu "Start Menu"
+	@return: -
+	@rtype: void
+	"""
+	global sceneId,currentScene
+	Tools.prDly("SALUT")
+	currentScene = sceneId["Start Menu"]
+
+	return
+
+def setSceneToSelectSave():
+	"""
+	Set current scene to the menu "Select save"
+	@return: -
+	@rtype: void
+	"""
+	global sceneId,currentScene
+	currentScene = sceneId["Select save"]
+
+	return
+
 
 if(__name__ == "__main__"):
 	tmps1 = time.time()

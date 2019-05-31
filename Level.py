@@ -478,6 +478,18 @@ def getPlayer(lvl):
 
 	return lvl["playerItem"]
 
+def getKeyBinder(lvl):
+	"""
+	Return \"keyBinder\" key value of the dict lvl (type : \"Level\")
+	@param lvl: Dictionnary containing all information about one Level object
+	@type lvl: dict
+
+	@return: \"keyBinder\" type object of the level under the form of a dict
+	@rtype: dict
+	"""
+
+	return lvl["keyBinder"]
+
 
 if(__name__ == "__main__"):
 	prov = Level("Levels/l0")

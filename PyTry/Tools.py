@@ -157,3 +157,17 @@ def prDly(string,dly=0.7): #print with delay for debug
 	print(string)
 	time.sleep(dly)
 	return
+
+def quit(keyboard_default):
+	
+
+	sys.stdout.write('\033[2J')
+	sys.stdout.write("\033[38;2;255;255;255m") #text white color restoration
+	sys.stdout.write('\033[0m')
+
+	KeyBinder.restoreKbStgs(keyboard_default)
+	sysExec("reset")
+
+	sys.exit()
+
+	return 

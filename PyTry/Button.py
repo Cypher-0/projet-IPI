@@ -71,11 +71,11 @@ def Button(txt,x,y,func = None,width = None,height = None):
 
 	#calc width and height
 	if(width == None):
-		width = maxLen+4
+		width = maxLen+8
 	else :
 		width = width
 	if(height == None):
-		height = len(tempList)+2
+		height = len(tempList)+4
 	else :
 		height = height
 
@@ -112,7 +112,7 @@ def Button(txt,x,y,func = None,width = None,height = None):
 	dataFrame = copy.deepcopy(tempList)
 
 	#test if object have to be in the center of the screen
-	SCREEN_WIDTH,SCREEN_HEIGHT = Tools.getTerminalSize()
+	SCREEN_WIDTH,SCREEN_HEIGHT = Object.SCREEN_WIDTH,Object.SCREEN_HEIGHT
 	if(x == -1):
 		x = (SCREEN_WIDTH/2.)-(width/2.)
 	if(y == -1):

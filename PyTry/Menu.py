@@ -100,9 +100,9 @@ def show(menu):
 	"""
 	#display every buttons
 
-	SCREEN_WIDTH,SCREEN_HEIGHT = Tools.getTerminalSize()
-	x = int((SCREEN_WIDTH/2.)-(len(menu["title"])/2.))
-	Tools.goAt(x,0)
+	SCREEN_WIDTH,SCREEN_HEIGHT = Object.SCREEN_WIDTH,Object.SCREEN_HEIGHT
+	x = int(round((SCREEN_WIDTH/2.)-(len(menu["title"])/2.)))
+	Tools.goAt(x+1,0)
 	sys.stdout.write('\033[53;4;1m\033[38;2;200;0;0m'+menu["title"]+'\033[0m')
 	#53:overlined
 	#4:Underline
@@ -254,6 +254,19 @@ def getButtonAt(menu,index):
 	assert type(index) is int
 	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
 	return menu["buttonList"][i]
+
+def getKeyBinder(menu):
+	"""
+	Return \"keyBinder\" key value of the dict lvl (type : \"Menu\")
+	@param lvl: Dictionnary containing all information about one Menu object
+	@type lvl: dict
+
+	@return: \"keyBinder\" type object of the level under the form of a dict
+	@rtype: dict
+	"""
+	assertMenu(menu)
+
+	return menu["keyBinder"]
 
 
 ##########################
