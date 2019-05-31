@@ -186,6 +186,44 @@ def addButton(menu,button):
 
 ##########################
 #
+#	Getters
+#
+##########################
+
+def getButtonAt(menu,index):
+	"""
+	Get contained button at index \"index\" in \"buttonList\" attribute of object \"menu\" of type \"Menu\"	
+	@param menu: Object of type \"Menu\"
+	@type menu: dict
+
+	@param index: Index of reached button
+	@type index: int
+
+	@return: object of type \"Button\" contained at index \"index\" in \"buttonList\" attribute of type \"Menu\"
+	@rtype: dict
+	"""
+	assertMenu(menu)
+	assert type(index) is int
+	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
+	return menu["buttonList"][i]
+
+def getKeyBinder(menu):
+	"""
+	Return \"keyBinder\" key value of the dict lvl (type : \"Menu\")
+	@param lvl: Dictionnary containing all information about one Menu object
+	@type lvl: dict
+
+	@return: \"keyBinder\" type object of the level under the form of a dict
+	@rtype: dict
+	"""
+	assertMenu(menu)
+
+	return menu["keyBinder"]
+
+
+
+##########################
+#
 #	STATIC Procedures
 #
 ##########################
@@ -232,42 +270,64 @@ def printScreen(filePath,vY = None,prePrintOption = ""):
 
 	return
 
-##########################
-#
-#	Getters
-#
-##########################
-
-def getButtonAt(menu,index):
+def printText(text):
 	"""
-	Get contained button at index \"index\" in \"buttonList\" attribute of object \"menu\" of type \"Menu\"	
-	@param menu: Object of type \"Menu\"
-	@type menu: dict
+	Print text in a frame in the middle of the screen
+	@param text: Text to print. Have to be on one line
+	@type text: str
 
-	@param index: Index of reached button
-	@type index: int
-
-	@return: object of type \"Button\" contained at index \"index\" in \"buttonList\" attribute of type \"Menu\"
-	@rtype: dict
+	@return: -
+	@rtype: void
 	"""
-	assertMenu(menu)
-	assert type(index) is int
-	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
-	return menu["buttonList"][i]
 
-def getKeyBinder(menu):
-	"""
-	Return \"keyBinder\" key value of the dict lvl (type : \"Menu\")
-	@param lvl: Dictionnary containing all information about one Menu object
-	@type lvl: dict
+	maxLen = 0
+	tempList = text.split('\n')
+	#calc max text width
+	for i in range(0,len(tempList)):
+		if(maxLen < len(tempList[i])):
+			maxLen = len(tempList[i])
 
-	@return: \"keyBinder\" type object of the level under the form of a dict
-	@rtype: dict
-	"""
-	assertMenu(menu)
+	width = None
+	height = None
 
-	return menu["keyBinder"]
+	dH = 4
+	dV = 4
 
+	#calc width and height
+	if(width == None):
+		width = maxLen+dH
+	else :
+		width = width
+	if(height == None):
+		height = len(tempList)+dV
+	else :
+		height = height
+
+	tempList = []
+	#create frame
+	for i in range(0,height):
+		tempList2 = []
+		for j in range(0,width):
+			if(i == 0 or i == height-1): #if on first line or last one
+				tempList2.append('#')
+			else:
+				tempList2.append(' ')
+		tempList2[0] = '#' #change column 0
+		tempList2[width-1] = '#' #change last column
+		tempList.append(tempList2)
+	#replace angles
+	tempList[0][0] = '#'
+	tempList[0][width-1] = '#'
+	tempList[height-1][width-1] = '#'
+	tempList[height-1][0] = '#'
+	frame = Item.Item(tempList,int(round((Object.SCREEN_WIDTH/2.)-(width/2.))),int(round((Object.SCREEN_HEIGHT/2.)-(height/2.))))
+	Object.show(frame,True)
+	
+	sys.stdout.write("\033["+str(int(round((Object.SCREEN_HEIGHT/2.)-(height/2.)+(dV/2.)+1)))+";"+str(int(round((Object.SCREEN_WIDTH/2.)-(width/2.)+(dH/2)+1)))+"H"+text)
+
+	print("")
+
+	return
 
 ##########################
 #
@@ -278,7 +338,7 @@ def getKeyBinder(menu):
 #if(__name__ == "__main__"):
 #	Tools.sysExec("clear")
 #	dfltstgs = KeyBinder.initKbStgs()
-#	screenObject = Item.Item(Tools.createDatasFromPic("player.pic",True))
-#	printScreen("player.pic",3)
+	#screenObject = Item.Item(Tools.createDatasFromPic("player.pic",True))
+#	printText("COUCOU\nComment ça va ?")
 #	KeyBinder.waitForKeyPressed()
 #	KeyBinder.restoreKbStgs(dfltstgs)

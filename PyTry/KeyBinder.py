@@ -1,6 +1,4 @@
-﻿
-
-"""
+﻿"""
 File containing definition of type "KeyBinder" used to manage interactions between keyboard and program
 """
 #used to link keyboard event and functions

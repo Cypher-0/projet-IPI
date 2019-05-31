@@ -11,7 +11,7 @@ import Item
 import copy
 import sys
 
-attributesList = ["datas","x","y","width","height","color","vX","vY","aX","aY","sprites","text","selectedColor","state","function"]
+attributesList = ["datas","x","y","width","height","color","vX","vY","aX","aY","sprites","text","unselectedColor","selectedColor","state","function"]
 #text : str : Button text
 #state : int : button state : 0 => normal; 1 => selected
 #selectedColor : list : color list (rgb) corresponding to bg color when selected (only applied on frame) or pressed (applied everywhere)
@@ -97,17 +97,17 @@ def Button(txt,x,y,func = None,width = None,height = None):
 		tempList2 = []
 		for j in range(0,width):
 			if(i == 0 or i == height-1): #if on first line or last one
-				tempList2.append('-')
+				tempList2.append('#')
 			else:
 				tempList2.append(' ')
-		tempList2[0] = '|' #change column 0
-		tempList2[width-1] = '|' #change last column
+		tempList2[0] = '#' #change column 0
+		tempList2[width-1] = '#' #change last column
 		tempList.append(tempList2)
 	#replace angles
-	tempList[0][0] = '+'
-	tempList[0][width-1] = '+'
-	tempList[height-1][width-1] = '+'
-	tempList[height-1][0] = '+'
+	tempList[0][0] = '#'
+	tempList[0][width-1] = '#'
+	tempList[height-1][width-1] = '#'
+	tempList[height-1][0] = '#'
 
 	dataFrame = copy.deepcopy(tempList)
 
@@ -124,7 +124,9 @@ def Button(txt,x,y,func = None,width = None,height = None):
 	Item.addSprite(baseObject,[list(txt)])
 
 	baseObject["text"] = txt
-	baseObject["selectedColor"] = [30,30,200]
+	baseObject["selectedColor"] = [30,220,50]
+	baseObject["unselectedColor"] = [220,50,30]
+
 	baseObject["state"] = 0
 	baseObject["function"] = func
 
@@ -162,10 +164,35 @@ def show(button):
 
 	Item.setSprite(button,1)#select frame sprite
 	tempStr = ""
+
+	textColor = [0,0,0]
+	
 	if(button["state"] == 1): #if button selected
 		tempStr+=('\033[5m')
+		
 		tempStr+=('\033[48;2;'+str(button["selectedColor"][0])+';'+str(button["selectedColor"][1])+';'+str(button["selectedColor"][2])+'m')
+		
+		textColor[0] = button["selectedColor"][0]-70 if(button["selectedColor"][0]-70 >= 0) else 0
+		textColor[1] = button["selectedColor"][1]-70 if(button["selectedColor"][1]-70 >= 0) else 0
+		textColor[2] = button["selectedColor"][2]-70 if(button["selectedColor"][2]-70 >= 0) else 0
+
+		tempStr+=('\033[38;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
+
 		sys.stdout.write(tempStr)
+
+	elif(button["state"] == 0): #if button selected
+		
+		tempStr+=('\033[48;2;'+str(button["unselectedColor"][0])+';'+str(button["unselectedColor"][1])+';'+str(button["unselectedColor"][2])+'m')
+		
+		textColor[0] = button["unselectedColor"][0]-70 if(button["unselectedColor"][0]-70 >= 0) else 0
+		textColor[1] = button["unselectedColor"][1]-70 if(button["unselectedColor"][1]-70 >= 0) else 0
+		textColor[2] = button["unselectedColor"][2]-70 if(button["unselectedColor"][2]-70 >= 0) else 0
+
+		tempStr+=('\033[38;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
+
+		sys.stdout.write(tempStr)
+
+
 	Object.show(button)#print selected sprite
 	sys.stdout.write('\033[0m') #reset color parameters
 
@@ -253,5 +280,25 @@ def setSelectedColor(button,color):
 	assertButton(button) #PERFORMANCE  --> comment this line to increase performances (use carefully)
 	
 	button["selectedColor"] = color
+
+	return
+
+def setUnselectedColor(button,color):
+	"""
+	Set \"unselectedColor\" attribute value of button \"button\"
+	@param button: object of type \"Button\"
+	@type button: dict
+	@param color: New color of the selected button's frame defined by the following format : [r,g,b]. Each value have to be in [0;255]
+	@type color: list
+	@return: -
+	@rtype: void
+	"""
+	assert type(color) is list #PERFORMANCE  --> comment this line to increase performances (use carefully)
+	for i in range(0,3): #PERFORMANCE  --> comment this line to increase performances (use carefully)
+		assert type(color[i]) is int 
+		assert color[i] >= 0 and color[i] < 256,"color[%r] have to be in [0,255]" % i #assert every colors are in [0;255]
+	assertButton(button) #PERFORMANCE  --> comment this line to increase performances (use carefully)
+	
+	button["unselectedColor"] = color
 
 	return

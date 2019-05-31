@@ -150,7 +150,7 @@ def show(object,showSpaces = False):#showSpaces allow user to print spaces in pl
 		for j in range(startX,limX):
 			data = object["datas"][i][j]
 			if(data != ''):
-				if((data != ' ' and not(showSpaces))):
+				if(data != ' ' or showSpaces):
 					objectStr += '\033['+str(i+int(round(Y))+1)+';'+str(j+int(round(X))+1)+'H'  #+1 because terminal 0 is at [1,1]
 					objectStr += str(data)
 

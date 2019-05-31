@@ -6,6 +6,8 @@ import Level
 import time
 import sys
 import subprocess
+import os
+import shutil
 
 dtShow = 0.07
 """dt used to refresh the screen """
@@ -40,11 +42,11 @@ def init():
 	#Start Menu
 	menuList.append(Menu.Menu("Start Menu"))
 	Menu.addButton(menuList[0],Button.Button("START",-1,15,setSceneToSelectSave))
-	Menu.addButton(menuList[0],Button.Button("AIDE",-1,30,onHelpPressed))
+	Menu.addButton(menuList[0],Button.Button("AIDE ",-1,30,onHelpPressed))
 
 	#Select save menu
 	menuList.append(Menu.Menu("Select save"))
-	Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42))
+	Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42,onNewGamePressed))
 	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'A',setSceneToStartMenu) #shift+a is the key to go back in menus
 
 	for i in range(0,len(menuList)):
@@ -186,6 +188,45 @@ def onHelpPressed():
 
 
 	KeyBinder.waitForKeyPressed()
+
+	return
+
+def onNewGamePressed():
+	"""
+	Function called when user ask to create a new game
+	@return: -
+	@rtype: void
+	"""
+	global keyboard_default
+
+	maxNameLength = 50
+	
+	KeyBinder.restoreKbStgs(keyboard_default)
+
+	name = ""
+	nameLength = 0
+	
+	while(nameLength > maxNameLength or nameLength == 0 or os.path.exists("Saves/"+name)):
+		Menu.printScreen("Pictures/askName.pic")
+		sys.stdout.write("\033[13;58H")
+		name = raw_input()
+		nameLength = len(name)
+
+		if(nameLength == 0):
+			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
+			Menu.printText("Merci de rentrer un nom un peu plus long ...")
+
+		elif(nameLength > maxNameLength):
+			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
+			Menu.printText("Merci de rentrer un nom un peu plus court ...")
+
+		elif(os.path.exists("Saves/"+name)):
+			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
+			Menu.printText("Cette sauvegarde existe deja ...")
+	
+	os.mkdir("Saves/"+name)
+
+	KeyBinder.initKbStgs()
 
 	return
 
