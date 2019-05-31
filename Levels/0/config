@@ -1,0 +1,3 @@
+scoreObjective = 200
+maxEnemysNumber = 1
+availableEnemys = ["basic"]

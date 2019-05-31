@@ -1,0 +1,3 @@
+scoreObjective = 500
+maxEnemysNumber = 2
+availableEnemys = ["basic","balloon"]
