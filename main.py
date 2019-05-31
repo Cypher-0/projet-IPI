@@ -45,6 +45,7 @@ def init():
 	#Select save menu
 	menuList.append(Menu.Menu("Select save"))
 	Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42))
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'A',setSceneToStartMenu) #shift+a is the key to go back in menus
 
 	for i in range(0,len(menuList)):
 		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'ESC',quit) #Add help action to each menu
@@ -195,7 +196,6 @@ def setSceneToStartMenu():
 	@rtype: void
 	"""
 	global sceneId,currentScene
-	Tools.prDly("SALUT")
 	currentScene = sceneId["Start Menu"]
 
 	return
