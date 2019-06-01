@@ -58,6 +58,9 @@ def init():
 		Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42,onNewGamePressed))
 	for i in range(0,countSaves()):
 		Menu.addButton(menuList[1],Button.Button(os.listdir("Saves")[i],-1,5+i*SAVES_BUTTONS_SPACE,onSaveSelected,54))
+	if(countSaves() > 0 and countSaves() < MAX_SAVES_NUMBER):
+		Menu.setSelectedIndex(menuList[1],1)
+
 	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'A',setSceneToStartMenu) #shift+a is the key to go back in menus
 
 
