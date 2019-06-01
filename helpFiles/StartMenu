@@ -1,38 +1,38 @@
 #########################################################################      Aide       ###########################################################################
 #                                                                 |                                                                                                 #
-#   Certaines touches sont universelles dans le jeu :             |                                                                                                 #
+#   Certaines touches sont universelles dans le jeu :             |  Vous etes sur le menu principal de PyTry.                                                      #
 #                                                                 |                                                                                                 #
+#  /#####\   /###\                                                |  L'aide que vous voyez actuellement est differente en fonction du menu ou vous vous trouvez.    #
+#  # Maj # + # Q # Permet de quitter le jeu a tout moment         |  Je vous invite donc à retenir la combinaison de touches permettant d'afficher l'aide.          #
+#  \#####/   \###/                                                |  Cela vous permettra d'avoir des informations supplementaires pour chaque menu.                 #
+#                                                                 |  Y compris une fois un niveau lance.                                                            #
 #  /#######\                                                      |                                                                                                 #
-#  # Echap # Permet de quitter le jeu à tout moment               |                                                                                                 #
-#  \#######/                                                      |                                                                                                 #
+#  # Echap # Permet de revenir en arriere dans les menus          |  Pour commencer, selectionnez le bouton start et validez. Vous pourrez alors creer une          #
+#  \#######/                                                      |  nouvelle partie.                                                                               #
 #                                                                 |                                                                                                 #
 #  /#####\   /###\                                                |                                                                                                 #
-#  # Maj # + # A # Permet de revenir en arrière dans les menus    |                                                                                                 #
-#  \#####/   \###/                                                |                                                                                                 #
-#                                                                 |                                                                                                 #
-#  /#####\   /###\                                                |                                                                                                 #
-#  # Maj # + # , # Permet d'accéder à l'aide                      |                                                                                                 #
+#  # Maj # + # , # Permet d'acceder a l'aide                      |                                                                                                 #
 #  \#####/   \###/                                                |                                                                                                 #
 #_________________________________________________________________|                                                                                                 #
-#                                                                                                                                                                   #
-#   Dans les menus :                                                                                                                                                #
-#                                                                                                                                                                   #
-#   /###\                                                                                                                                                           #
-#   # Z #    Monter la sélection                                                                                                                                    #
-#   \###/                                                                                                                                                           #
-#                                                                                                                                                                   #
-#   /###\                                                                                                                                                           #
-#   # S #    Descendre la sélection                                                                                                                                 #
-#   \###/                                                                                                                                                           #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-# /########\                                                                                                                                                        #
-# # Entrée # Valider la sélection                                                                                                                                   #
-# \########/                                                                                                                                                        #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
+#                                                                 |                                                                                                 #
+#   Dans les menus :                                              |                                                                                                 #
+#                                                                 |                                                                                                 #
+#   /###\                                                         |                                                                                                 #
+#   # Z #    Monter la selection                                  |                                                                                                 #
+#   \###/                                                         |                                                                                                 #
+#                                                                 |                                                                                                 #
+#   /###\                                                         |                                                                                                 #
+#   # S #    Descendre la selection                               |                                                                                                 #
+#   \###/                                                         |                                                                                                 #
+#                                                                 |                                                                                                 #
+#                                                                 |                                                                                                 #
+# /########\                                                      |                                                                                                 #
+# # Entree # Valider la selection                                 |                                                                                                 #
+# \########/                                                      |                                                                                                 #
+#                                                                 |                                                                                                 #
+#                                                                 |                                                                                                 #
+#                                                                 |                                                                                                 #
+#                                                                 |                                                                                                 #
 #                                                                                                                                                                   #
 #                                                                                                                                                                   #
 #                                                                                                                                                                   #

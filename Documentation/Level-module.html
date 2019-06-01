@@ -315,6 +315,41 @@
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">dict</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Level-module.html#getKeyBinder" class="summary-sig-name">getKeyBinder</a>(<span class="summary-sig-arg">lvl</span>)</span><br />
+      Return &quot;keyBinder&quot; key value of the dict lvl (type : 
+      &quot;Level&quot;)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Level-pysrc.html#getKeyBinder">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">str</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="Level-module.html#getLevelName" class="summary-sig-name">getLevelName</a>(<span class="summary-sig-arg">lvl</span>)</span><br />
+      Get the name of the level</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="Level-pysrc.html#getLevelName">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 </table>
 <!-- ==================== VARIABLES ==================== -->
 <a name="section-Variables"></a>
@@ -342,7 +377,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">list</span>
     </td><td class="summary">
         <a href="Level-module.html#attributesList" class="summary-name">attributesList</a> = <code title="['levelName',
  'bgItem0',
@@ -353,7 +388,7 @@
  'keyBinder',
  'enemyList',
 ..."><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">levelName</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">bgItem0</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">bgItem1</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">fgItem0</code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></code><br />
-      levelName
+      &quot;Level&quot; type attributes list
     </td>
   </tr>
 <tr>
@@ -771,6 +806,58 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="getKeyBinder"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getKeyBinder</span>(<span class="sig-arg">lvl</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Level-pysrc.html#getKeyBinder">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return &quot;keyBinder&quot; key value of the dict lvl (type : 
+  &quot;Level&quot;)</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>lvl</code></strong> (dict) - Dictionnary containing all information about one Level object</li>
+    </ul></dd>
+    <dt>Returns: dict</dt>
+        <dd>&quot;keyBinder&quot; type object of the level under the form of 
+          a dict</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getLevelName"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getLevelName</span>(<span class="sig-arg">lvl</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="Level-pysrc.html#getLevelName">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the name of the level</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>lvl</code></strong> (dict) - Dictionnary containing all information about one Level object</li>
+    </ul></dd>
+    <dt>Returns: str</dt>
+        <dd>Level name</dd>
+  </dl>
+</td></tr></table>
+</div>
 <br />
 <!-- ==================== VARIABLES DETAILS ==================== -->
 <a name="section-VariablesDetails"></a>
@@ -796,8 +883,10 @@
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <h3 class="epydoc">attributesList</h3>
-  <p>levelName</p>
+  <p>&quot;Level&quot; type attributes list</p>
   <dl class="fields">
+    <dt>Type:</dt>
+      <dd>list</dd>
   </dl>
   <dl class="fields">
     <dt>Value:</dt>
@@ -841,7 +930,7 @@
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Thu May 30 16:15:04 2019
+    on Sat Jun  1 18:50:38 2019
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -55,23 +55,25 @@ def init():
 	#Select save menu
 	menuList.append(Menu.Menu("Select save"))
 	if(countSaves() < MAX_SAVES_NUMBER):
-		Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42,onNewGamePressed))
+		Menu.addButton(menuList[1],Button.Button("Nouvelle partie",10,42,onNewGamePressed))
 	for i in range(0,countSaves()):
 		Menu.addButton(menuList[1],Button.Button(os.listdir("Saves")[i],-1,5+i*SAVES_BUTTONS_SPACE,onSaveSelected,54))
 	if(countSaves() > 0 and countSaves() < MAX_SAVES_NUMBER):
 		Menu.setSelectedIndex(menuList[1],1)
 
-	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'A',setSceneToStartMenu) #shift+a is the key to go back in menus
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'ESC',setSceneToStartMenu) #ESC is the key to go back in menus
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'D',onDelSavePressed) #shift+d is the key to delete a save
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'N',onNewGamePressed) #shift+n is the key to add a save
 
 
 	#Select level menu
 	menuList.append(Menu.Menu("Select level"))
-	KeyBinder.addAction(Menu.getKeyBinder(menuList[2]),'A',setSceneToSelectSave) #shift+a is the key to go back in menus
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[2]),'ESC',setSceneToSelectSave) #ESC is the key to go back in menus
 
 	#all menus
 	for i in range(0,len(menuList)):
-		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'ESC',quit) #Add help action to each menu
-		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'?',onHelpPressed)
+		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'Q',quit)
+		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'?',onHelpPressed)#Add help action to each menu
 
 	return 
 
@@ -206,10 +208,10 @@ def loadLevel(name,currentSave):
 	assert type(currentSave) is str
 
 	currentLevel = Level.Level(name,currentSave)
-	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',quit) #Add quit action to keybinder
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'Q',quit) #Add quit action to keybinder
 	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'?',onHelpPressed) #Add help action to keybinder
 
-	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'A',setSceneToSelectLevel) #shift+a is the key to go back in menus
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',setSceneToSelectLevel) #ESC is the key to go back in menus
 
 
 	return
@@ -300,7 +302,7 @@ def onNewGamePressed():
 	name = ""
 	nameLength = 0
 	
-	while(nameLength > maxNameLength or nameLength == 0 or os.path.exists("Saves/"+name)):
+	while(nameLength > maxNameLength or nameLength == 0 or os.path.exists("Saves/"+name) or "/" in name or name == "Nouvelle partie"):
 		Menu.printScreen("Pictures/askName.pic")
 		sys.stdout.write("\033[13;58H")
 		name = raw_input()
@@ -314,9 +316,13 @@ def onNewGamePressed():
 			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
 			Menu.printText("Merci de rentrer un nom un peu plus court ...")
 
-		elif(os.path.exists("Saves/"+name)):
+		elif(os.path.exists("Saves/"+name) or name == "Nouvelle partie"):
 			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
 			Menu.printText("Cette sauvegarde existe deja ...")
+
+		elif("/" in name):
+			sys.stdout.write("\033[27;0H\033[2K\033[26;0H\033[2K\033[25;0H\033[2K\033[24;0H\033[2K\033[23;0H\033[2K")
+			Menu.printText("Navré mais il va falloir recnoncer à utiliser \"/\"")
 	
 	os.mkdir("Saves/"+name)
 	shutil.copyfile("baseFiles/player.stats","Saves/"+name+"/player.stats")
@@ -332,6 +338,40 @@ def onNewGamePressed():
 		Menu.setSelectedIndex(menuList[1],MAX_SAVES_NUMBER-1)
 
 	KeyBinder.initKbStgs()
+
+	return
+
+def onDelSavePressed():
+	""" 
+	Function called when user ask to delete a save
+	@return: -
+	@rtype: void
+	"""
+	global menuList
+
+	buttonText = Button.getText(Menu.getButtonAt(menuList[1],Menu.getSelectedIndex(menuList[1])))
+
+	if(buttonText != "Nouvelle partie"):
+		Tools.sysExec("clear")
+		Menu.printScreen("Pictures/comfirmDeleteSave.pic")
+		sys.stdout.write("\033[16;60H"+'\033[53;4;1m\033[38;2;200;0;0m'+buttonText)
+		print("")
+		key = ""
+		while(key != "o" and key != "n"):
+			key = KeyBinder.waitForKeyPressed()
+		if(key == "o"):
+			Menu.removeButton(menuList[1],buttonText)
+
+			if(countSaves() == MAX_SAVES_NUMBER):
+				Menu.addButton(menuList[1],Button.Button("Nouvelle partie",10,42,onNewGamePressed),0)
+
+			shutil.rmtree("Saves/"+buttonText)
+
+			Menu.setSelectedIndex(menuList[1],0)
+			return
+
+		elif(key == "n"):
+			return
 
 	return
 

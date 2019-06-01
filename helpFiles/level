@@ -2,20 +2,20 @@
 #                                                                 |                                                                                                 #
 #   Certaines touches sont universelles dans le jeu :             |  Vous etes actuellement en jeu.                                                                 #
 #                                                                 |                                                                                                 #
-#  /#######\                                                      |  Votre objectif est d'atteindre le score vous permettant de finaliser le niveau.                #
-#  # Echap # Permet de quitter le jeu a tout moment               |                                                                                                 #
-#  \#######/                                                      |  Votre progression dans le niveau est affichee en haut de l'ecran par une barre de progression. #
+#  /#####\   /###\                                                |  Votre objectif est d'atteindre le score vous permettant de finaliser le niveau.                #
+#  # Maj # + # Q # Permet de quitter le jeu a tout moment         |                                                                                                 #
+#  \#####/   \###/                                                |  Votre progression dans le niveau est affichee en haut de l'ecran par une barre de progression. #
 #                                                                 |                                                                                                 #
-#  /#####\   /###\                                                |  Votre vie est affichee en bas de l'ecran par une barre de progression.                         #
-#  # Maj # + # A # Permet de revenir en arriere dans les menus    |  Votre score est affichee juste au-dessus de celle-ci.                                          #
-#  \#####/   \###/                                                |                                                                                                 #
+#  /#######\                                                      |  Votre vie est affichee en bas de l'ecran par une barre de progression.                         #
+#  # Echap # Permet de revenir en arriere dans les menus          |  Votre score est affichee juste au-dessus de celle-ci.                                          #
+#  \#######/                                                      |                                                                                                 #
 #                                                                 |  Si vous mourrez, vous perdez le niveau.                                                        #
 #  /#####\   /###\                                                |                                                                                                 #
 #  # Maj # + # , # Permet d'acceder a l'aide                      |  Vous ne pouvez pas tirer au travers du sol (couleur verte)                                     #
 #  \#####/   \###/                                                |  Si vous rentrez en collision avec celui-ci, vous prendrez beaucoup de degats                   #
 #_________________________________________________________________|                                                                                                 #
-#                                                                 |  Les differents types d'ennemis ont chacuns des proprietes differentes et n'auront pas le même  #
-#                   En jeu :                                      |  effet.                                                                                         #
+#                                                                 |  Les differents types d'ennemis ont chacuns des caracteristiques differentes et n'auront pas    #
+#                   En jeu :                                      |  le meme effet.                                                                                 #
 #                                                                 |                                                                                                 #
 #           Deplacements du joueur :                              |                                                                                                 #
 #                                                                 |                                                                                                 #

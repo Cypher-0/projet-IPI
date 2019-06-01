@@ -170,20 +170,28 @@ def onEnter(menu):
 	return result
 
 
-def addButton(menu,button):
+def addButton(menu,button,index = None):
 	"""
 	Add a button to a menu. New button is directly passed in parameters
 	@param menu: object of type \"Menu\" on which the button will be added
 	@type menu: dict
 	@param button: Object of type \"Button\" to add to the menu
 	@type button: dict
+	@param index: insert button at \"index\" in buttonList
+	@type index: int
 	@return: -
 	@rtype: void
 	"""
 
 	assertMenu(menu)
 	Button.assertButton(button)
-	menu["buttonList"].append(button)
+	assert index == None or type (index) is int
+
+	if(index == None):
+		menu["buttonList"].append(button)
+	else:
+		menu["buttonList"].insert(index,button)
+
 
 	return
 
@@ -271,9 +279,9 @@ def getButtonAt(menu,index):
 
 def getKeyBinder(menu):
 	"""
-	Return \"keyBinder\" key value of the dict lvl (type : \"Menu\")
-	@param lvl: Dictionnary containing all information about one Menu object
-	@type lvl: dict
+	Return \"keyBinder\" key value of the dict menu (type : \"Menu\")
+	@param menu: Dictionnary containing all information about one Menu object
+	@type menu: dict
 
 	@return: \"keyBinder\" type object of the level under the form of a dict
 	@rtype: dict
@@ -306,6 +314,7 @@ def setSelectedIndex(menu,index):
 	assert type(index) is int
 	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
 	menu["currentIndex"] = index
+	menu["lastIndex"] = index
 
 
 

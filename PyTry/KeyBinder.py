@@ -253,17 +253,18 @@ def waitForKeyPressed(key = None):
 	@param key: Is the key pressed \"key\". None <=> any key will work
 	@type key: str
 
-	@return: -
-	@rtype: void
+	@return: key pressed
+	@rtype: str
 	"""
 	while True:
 		if(isData()):
+			keyPressed = sys.stdin.read(1)
 			if(key != None):
-				if(sys.stdin.read(1) == key):
+				if(keyPressed == key):
 					clearBuffer()
-					return
+					return keyPressed
 			else:
 				clearBuffer()
-				return
+				return keyPressed
 
-	return
+	return None

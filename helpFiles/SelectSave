@@ -1,42 +1,42 @@
 #########################################################################      Aide       ###########################################################################
 #                                                                 |                                                                                                 #
-#   Certaines touches sont universelles dans le jeu :             |                                                                                                 #
+#   Certaines touches sont universelles dans le jeu :             |  Vous vous trouvez dans le menu de selection des sauvegardes.                                   #
+#                                                                 |                                                                                                 #
+#  /#####\   /###\                                                |  Ici apparaissent les sauvegardes crees. Elles sont au nombre maximum de 5.                     #
+#  # Maj # + # Q # Permet de quitter le jeu a tout moment         |                                                                                                 #
+#  \#####/   \###/                                                |                                                                                                 #
 #                                                                 |                                                                                                 #
 #  /#######\                                                      |                                                                                                 #
-#  # Echap # Permet de quitter le jeu à tout moment               |                                                                                                 #
+#  # Echap # Permet de revenir en arriere dans les menus          |                                                                                                 #
 #  \#######/                                                      |                                                                                                 #
 #                                                                 |                                                                                                 #
 #  /#####\   /###\                                                |                                                                                                 #
-#  # Maj # + # A # Permet de revenir en arrière dans les menus    |                                                                                                 #
-#  \#####/   \###/                                                |                                                                                                 #
-#                                                                 |                                                                                                 #
-#  /#####\   /###\                                                |                                                                                                 #
-#  # Maj # + # , # Permet d'accéder à l'aide                      |                                                                                                 #
+#  # Maj # + # , # Permet d'acceder a l'aide                      |                                                                                                 #
 #  \#####/   \###/                                                |                                                                                                 #
 #_________________________________________________________________|                                                                                                 #
+#                                                                 |                                                                                                 #
+#   Dans les menus :                                              |                                                                                                 #
+#                                                                 |                                                                                                 #
+#   /###\                                                         |                                                                                                 #
+#   # Z #    Monter la selection                                  |                                                                                                 #
+#   \###/                                                         |                                                                                                 #
+#                                                                 |                                                                                                 #
+#   /###\                                                         |                                                                                                 #
+#   # S #    Descendre la selection                               |                                                                                                 #
+#   \###/                                                         |                                                                                                 #
+#                                                                 |                                                                                                 #
+#                                                                 |                                                                                                 #
+# /########\                                                      |                                                                                                 #
+# # Entree # Valider la selection                                 |                                                                                                 #
+# \########/                                                      |                                                                                                 #
+#                                                                 |                                                                                                 #
+#  /#####\   /###\                                                |                                                                                                 #
+#  # Maj # + # N # Permet de creer une partie.                    |                                                                                                 #
+#  \#####/   \###/                                                |                                                                                                 #
 #                                                                                                                                                                   #
-#   Dans les menus :                                                                                                                                                #
-#                                                                                                                                                                   #
-#   /###\                                                                                                                                                           #
-#   # Z #    Monter la sélection                                                                                                                                    #
-#   \###/                                                                                                                                                           #
-#                                                                                                                                                                   #
-#   /###\                                                                                                                                                           #
-#   # S #    Descendre la sélection                                                                                                                                 #
-#   \###/                                                                                                                                                           #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-# /########\                                                                                                                                                        #
-# # Entrée # Valider la sélection                                                                                                                                   #
-# \########/                                                                                                                                                        #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
-#                                                                                                                                                                   #
+#  /#####\   /###\                                                                                                                                                  #
+#  # Maj # + # D # Permet de supprimer une sauvegarde                                                                                                               #
+#  \#####/   \###/                                                                                                                                                  #
 #                                                                                                                                                                   #
 #                                                                                                                                                                   #
 #                                                                                                                                                                   #
