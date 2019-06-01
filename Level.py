@@ -16,7 +16,7 @@ from random import randint
 dt = Object.dt
 
 attributesList = ["levelName","bgItem0","bgItem1","fgItem0","fgItem1","playerItem","keyBinder","enemyList","availableEnemys","maxEnemysNumber","HUD","playerScore","scoreObjective"] #+Item.attributesList
-"levelName"
+#levelName : str : name of the level
 #bgItem0 : Item : background of the level (part 1) #2 parts are used to allow a smooth screen renewal
 #fgItem0 : Item : foreGround of the level (part 1)
 #bgItem1 : Item : background of the level (part 2)
@@ -247,6 +247,7 @@ def interact(lvl):
 					#if enemy destroyed
 					if(Enemy.getLife(j) == 0):
 						addPlayerScore(lvl,Enemy.getScoreValue(j))
+						Enemy.setLife(j,-1)
 						Enemy.kill(j)
 
 
@@ -490,6 +491,19 @@ def getKeyBinder(lvl):
 
 	return lvl["keyBinder"]
 
+
+def getLevelName(lvl):
+	"""
+	Get the name of the level
+	@param lvl: Dictionnary containing all information about one Level object
+	@type lvl: dict
+
+	@return: Level name
+	@rtype: str
+	"""
+	assertLevel(lvl)
+
+	return lvl["levelName"]
 
 if(__name__ == "__main__"):
 	prov = Level("Levels/l0")

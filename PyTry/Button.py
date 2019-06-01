@@ -170,25 +170,25 @@ def show(button):
 	if(button["state"] == 1): #if button selected
 		tempStr+=('\033[5m')
 		
-		tempStr+=('\033[48;2;'+str(button["selectedColor"][0])+';'+str(button["selectedColor"][1])+';'+str(button["selectedColor"][2])+'m')
+		tempStr+=('\033[38;2;'+str(button["selectedColor"][0])+';'+str(button["selectedColor"][1])+';'+str(button["selectedColor"][2])+'m')
 		
 		textColor[0] = button["selectedColor"][0]-70 if(button["selectedColor"][0]-70 >= 0) else 0
 		textColor[1] = button["selectedColor"][1]-70 if(button["selectedColor"][1]-70 >= 0) else 0
 		textColor[2] = button["selectedColor"][2]-70 if(button["selectedColor"][2]-70 >= 0) else 0
 
-		tempStr+=('\033[38;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
+		tempStr+=('\033[48;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
 
 		sys.stdout.write(tempStr)
 
 	elif(button["state"] == 0): #if button selected
 		
-		tempStr+=('\033[48;2;'+str(button["unselectedColor"][0])+';'+str(button["unselectedColor"][1])+';'+str(button["unselectedColor"][2])+'m')
+		tempStr+=('\033[38;2;'+str(button["unselectedColor"][0])+';'+str(button["unselectedColor"][1])+';'+str(button["unselectedColor"][2])+'m')
 		
 		textColor[0] = button["unselectedColor"][0]-70 if(button["unselectedColor"][0]-70 >= 0) else 0
 		textColor[1] = button["unselectedColor"][1]-70 if(button["unselectedColor"][1]-70 >= 0) else 0
 		textColor[2] = button["unselectedColor"][2]-70 if(button["unselectedColor"][2]-70 >= 0) else 0
 
-		tempStr+=('\033[38;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
+		tempStr+=('\033[48;2;'+str(textColor[0])+';'+str(textColor[1])+';'+str(textColor[2])+'m')
 
 		sys.stdout.write(tempStr)
 
@@ -218,6 +218,18 @@ def show(button):
 #	Getters
 #
 ##########################
+
+def getText(button):
+	"""
+	Get button \"text\" attribute value : 0-Unselected | 1-Selected
+	@param button: object of type \"Button\"
+	@type button: dict
+	@return: \"button\" state
+	@rtype: str
+	"""
+	assertButton(button)
+
+	return button["text"]
 
 def getState(button):
 	"""

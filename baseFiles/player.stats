@@ -2,3 +2,4 @@ fireTimeSpace = 0.5
 shotSpeed = 60
 life = 200
 damageValue = 15
+maxLvlUnlocked = 0

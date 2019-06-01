@@ -82,8 +82,9 @@ def interact(menu): #main function which is managing keyboard events for the men
 	"""
 	assertMenu(menu)
 	#set buttons state
-	Button.setState(menu["buttonList"][menu["lastIndex"]],0)
-	Button.setState(menu["buttonList"][menu["currentIndex"]],1)
+	if(len(menu["buttonList"]) > 0):
+		Button.setState(menu["buttonList"][menu["lastIndex"]],0)
+		Button.setState(menu["buttonList"][menu["currentIndex"]],1)
 
 	KeyBinder.interact(menu["keyBinder"])
 
@@ -125,9 +126,10 @@ def upIndex(menu):
 
 	assertMenu(menu)
 	if(menu["buttonList"] != None):
-		menu["lastIndex"] = menu["currentIndex"]
-		menu["currentIndex"] -= 1
-		menu["currentIndex"] %= len(menu["buttonList"])
+		if(len(menu["buttonList"]) > 0):
+			menu["lastIndex"] = menu["currentIndex"]
+			menu["currentIndex"] -= 1
+			menu["currentIndex"] %= len(menu["buttonList"])
 
 	return
 
@@ -142,9 +144,10 @@ def downIndex(menu):
 
 	assertMenu(menu)
 	if(menu["buttonList"] != None):
-		menu["lastIndex"] = menu["currentIndex"]
-		menu["currentIndex"] += 1
-		menu["currentIndex"] %= len(menu["buttonList"])
+		if(len(menu["buttonList"]) > 0):
+			menu["lastIndex"] = menu["currentIndex"]
+			menu["currentIndex"] += 1
+			menu["currentIndex"] %= len(menu["buttonList"])
 
 	return
 
@@ -159,10 +162,11 @@ def onEnter(menu):
 	"""
 	result = None
 	if(menu["buttonList"] != None):
-		for i in range(0,len(menu["buttonList"])):
-			if(Button.getState(menu["buttonList"][i]) == 1):
-				if(Button.getFunc(menu["buttonList"][i]) != None):
-					result = Button.getFunc(menu["buttonList"][i])()
+		if(len(menu["buttonList"]) > 0 ):
+			for i in menu["buttonList"]:
+				if(Button.getState(i) == 1):
+					if(Button.getFunc(i) != None):
+						result = Button.getFunc(i)()
 	return result
 
 
@@ -183,12 +187,69 @@ def addButton(menu,button):
 
 	return
 
+def removeButton(menu,button):
+	"""
+	Remove a button from a menu
+
+	@param menu: object of type \"Menu\" on which the button will be removed
+	@type menu: dict
+	
+	@param button: Button to remove. If type is str, \"button\" correspond to button's text to remove. If it's int, it's corresponding to the index.
+	@type button: str or int
+
+	@return: -
+	@rtype: void
+	"""
+
+	assertMenu(menu)
+	assert type(button) is str or int
+
+	if(type(button) is int):
+		assert button >= 0 and button < len(menu["buttonList"]),"Index out of range,try is %r and have to be in [0;%r]" % (button,len(menu["buttonList"]))
+		menu["buttonList"].pop(button)
+		
+	elif(type(button) is str):
+		for i in menu["buttonList"]:
+			if(Button.getText(i) == button):
+				menu["buttonList"].remove(i)
+
+	return
+
+def removeAllButtons(menu):
+	"""
+	Remove all buttons from a menu
+
+	@param menu: object of type \"Menu\" on which all buttons will be removed
+	@type menu: dict
+
+	@return: -
+	@rtype: void
+	"""
+
+	assertMenu(menu)
+	for i in range(0,len(menu["buttonList"])):
+		menu["buttonList"].pop()
+
+	return
 
 ##########################
 #
 #	Getters
 #
 ##########################
+
+def getSelectedIndex(menu):
+	"""
+	Get the index of selected button of the menu	
+	@param menu: Object of type \"Menu\"
+	@type menu: dict
+
+	@return: index of selected button of the menu
+	@rtype: int
+	"""
+	assertMenu(menu)
+
+	return menu["currentIndex"]
 
 def getButtonAt(menu,index):
 	"""
@@ -204,8 +265,9 @@ def getButtonAt(menu,index):
 	"""
 	assertMenu(menu)
 	assert type(index) is int
-	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
-	return menu["buttonList"][i]
+	if(len(menu["buttonList"]) != 0):
+		assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
+	return menu["buttonList"][index]
 
 def getKeyBinder(menu):
 	"""
@@ -219,6 +281,31 @@ def getKeyBinder(menu):
 	assertMenu(menu)
 
 	return menu["keyBinder"]
+
+
+
+##########################
+#
+#	Setters
+#
+##########################
+
+def setSelectedIndex(menu,index):
+	"""
+	Set current selected index of the menu to \"index\"
+	@param menu: Object of type \"Menu\"
+	@type menu: dict
+
+	@param index: new selected  button index
+	@type index: int
+
+	@return: void
+	@rtype: void
+	"""
+	assertMenu(menu)
+	assert type(index) is int
+	assert index >= 0 and index < len(menu["buttonList"]),"Index out of range. Tried is : %r and it have to be in [0,%r]" % (index,len(menu["buttonList"])-1)
+	menu["currentIndex"] = index
 
 
 
@@ -321,7 +408,7 @@ def printText(text):
 	tempList[height-1][width-1] = '#'
 	tempList[height-1][0] = '#'
 	frame = Item.Item(tempList,int(round((Object.SCREEN_WIDTH/2.)-(width/2.))),int(round((Object.SCREEN_HEIGHT/2.)-(height/2.))))
-	Object.show(frame,True)
+	Object.show(frame)
 	
 	sys.stdout.write("\033["+str(int(round((Object.SCREEN_HEIGHT/2.)-(height/2.)+(dV/2.)+1)))+";"+str(int(round((Object.SCREEN_WIDTH/2.)-(width/2.)+(dH/2)+1)))+"H"+text)
 

@@ -17,7 +17,7 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","scor
 #shotList : list of objects of type "Shots" : all shots fired from the enemy. Each one is erase if it's out of the screen
 #shotSpeed : float : enemy's shot speed on screen
 
-#life : float : enemy's life [0;100]
+#life : float : enemy's life [-1;100] -1 to disable enemy for player
 #scoreValue : float : score to give to the player when enemy destroyed
 #moveFunction : str : y = f(x)
 #startY : float : enemy start point on y axis
@@ -148,9 +148,10 @@ def takeDamage(enemy,amount):
 	assertenemy(enemy)
 	assert type(amount) is int or type(amount) is float
 
-	enemy["life"] -= amount
-	if(enemy["life"] < 0):
-		enemy["life"] = 0
+	if(not(enemy["isDead"])):
+		enemy["life"] -= amount
+		if(enemy["life"] < 0):
+			enemy["life"] = 0
 
 	return
 
@@ -393,17 +394,17 @@ def setLife(enemy,value):
 	@param enemy: Dictionnary containing all information about one \"Enemy\" object
 	@type enemy: dict
 
-	@param value: new value for the content of \"life\" key from \"Enemy\"
+	@param value: new value for the content of \"life\" key from \"Enemy\" | -1 <=> disable enemy
 	@type value: float
 
 	@return: -
 	@rtype: void
 	"""
-	assert type(value) is float
-	assert value >= 0 and value <= 1000,"Life out of range"
+	assert type(value) is float or int
+	assert value >= -1 and value <= 1000,"Life out of range"
 	assertenemy(enemy)
 
-	enemy["life"] = value
+	enemy["life"] = float(value)
 
 	return
 

@@ -8,13 +8,14 @@ import sys
 import subprocess
 import os
 import shutil
+import copy
 
 dtShow = 0.07
 """dt used to refresh the screen """
 dtCalc = Object.dt
 """dt used in calcs """
 
-saveName = "1"
+saveName = ""
 """Loaded save name """
 
 keyboard_default = None #var to save keyboard settings
@@ -22,7 +23,7 @@ keyboard_default = None #var to save keyboard settings
 
 currentScene = 0
 """Current scene displayed and calculated """
-sceneId = {"Start Menu":0,"Select save":1,"level":2}
+sceneId = {"PyTry":0,"Select save":1,"Select level":2,"level":3}
 """Id corresponding to each scene"""
 
 menuList = []
@@ -31,6 +32,9 @@ menuList = []
 currentLevel = None
 """Level played (dict <=> type Level)"""
 
+
+MAX_SAVES_NUMBER,SAVES_BUTTONS_SPACE = 5,8
+
 def init():
 	global dtShow,keyboard_default,kb_global
 
@@ -38,23 +42,33 @@ def init():
 
 	keyboard_default = KeyBinder.initKbStgs()
 
+	if(not(os.path.exists("Saves"))):
+		os.mkdir("Saves")
+
 	#--------------------------- Menus
-	#Start Menu
-	menuList.append(Menu.Menu("Start Menu"))
-	Menu.addButton(menuList[0],Button.Button("START",-1,15,setSceneToSelectSave))
-	Menu.addButton(menuList[0],Button.Button("AIDE ",-1,30,onHelpPressed))
+	#PyTry
+	menuList.append(Menu.Menu("PyTry"))
+	Menu.addButton(menuList[0],Button.Button("START",-1,5,setSceneToSelectSave,40))
+	Menu.addButton(menuList[0],Button.Button("AIDE ",-1,17,onHelpPressed,40))
+	Menu.addButton(menuList[0],Button.Button("Quitter",-1,29,quit,40))
 
 	#Select save menu
 	menuList.append(Menu.Menu("Select save"))
-	Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42,onNewGamePressed))
+	if(countSaves() < MAX_SAVES_NUMBER):
+		Menu.addButton(menuList[1],Button.Button("Nouvelle partie",-1,42,onNewGamePressed))
+	for i in range(0,countSaves()):
+		Menu.addButton(menuList[1],Button.Button(os.listdir("Saves")[i],-1,5+i*SAVES_BUTTONS_SPACE,onSaveSelected,54))
 	KeyBinder.addAction(Menu.getKeyBinder(menuList[1]),'A',setSceneToStartMenu) #shift+a is the key to go back in menus
 
+
+	#Select level menu
+	menuList.append(Menu.Menu("Select level"))
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[2]),'A',setSceneToSelectSave) #shift+a is the key to go back in menus
+
+	#all menus
 	for i in range(0,len(menuList)):
 		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'ESC',quit) #Add help action to each menu
 		KeyBinder.addAction(Menu.getKeyBinder(menuList[i]),'?',onHelpPressed)
-
-	#level
-	loadLevel("0","1")
 
 	return 
 
@@ -67,6 +81,8 @@ def quit():
 
 	KeyBinder.restoreKbStgs(keyboard_default)
 
+	#Tools.sysExec("reset")
+
 	sys.exit()
 
 	return
@@ -76,20 +92,43 @@ def quit():
 
 
 def live():
-	global dtShow,currentScene,sceneId,currentLevel
+	global dtShow,currentScene,sceneId,currentLevel,saveName
 
 	#KeyBinder.interact(kb_global)
 
 	if(currentScene == sceneId["level"]):
 		if(currentLevel != None):
-			if(Level.interact(currentLevel) != 0):
+			lvlState = Level.interact(currentLevel)
+
+			if(lvlState != 0):
+				setSceneToSelectLevel()
+				if(lvlState == 2):#if player win
+					file = open("Saves/"+saveName+"/player.stats","r")
+					content = file.read()
+					file.close()
+					exec(content)
+					#search and replace maxLvlUnlocked
+					if(maxLvlUnlocked == int(Level.getLevelName(currentLevel))):
+						content = content[0:content.find("maxLvlUnlocked")+len("maxLvlUnlocked")]+" = "
+						content += str(int(Level.getLevelName(currentLevel))+1)
+						file = open("Saves/"+saveName+"/player.stats","w")
+						file.write(content)
+						file.close()
+
+				#reload level selection menu
+				onSaveSelected()
+
+				#clear currentLevel
 				currentLevel = None
-				currentScene = 0
+
+
 	
-	elif(currentScene == sceneId["Start Menu"]):
+	elif(currentScene == sceneId["PyTry"]):
 		Menu.interact(menuList[0])
 	elif(currentScene == sceneId["Select save"]):
 		Menu.interact(menuList[1])
+	elif(currentScene == sceneId["Select level"]):
+		Menu.interact(menuList[2])
 
 	return 
 
@@ -105,10 +144,12 @@ def show():
 	if(currentScene == sceneId["level"]):
 		if(currentLevel != None):
 			Level.show(currentLevel)
-	elif(currentScene == sceneId["Start Menu"]):
+	elif(currentScene == sceneId["PyTry"]):
 		Menu.show(menuList[0])
 	elif(currentScene == sceneId["Select save"]):
 		Menu.show(menuList[1])
+	elif(currentScene == sceneId["Select level"]):
+		Menu.show(menuList[2])
 
 	sys.stdout.write("\033[0;0H\n")
 
@@ -165,6 +206,8 @@ def loadLevel(name,currentSave):
 	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',quit) #Add quit action to keybinder
 	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'?',onHelpPressed) #Add help action to keybinder
 
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'A',setSceneToSelectLevel) #shift+a is the key to go back in menus
+
 
 	return
 
@@ -177,10 +220,12 @@ def onHelpPressed():
 	Tools.sysExec("clear")
 
 	#menu help
-	if(currentScene == sceneId["Start Menu"]):
+	if(currentScene == sceneId["PyTry"]):
 		Menu.printScreen("helpFiles/"+"StartMenu")
 	elif(currentScene == sceneId["Select save"]):
 		Menu.printScreen("helpFiles/"+"SelectSave")
+	elif(currentScene == sceneId["Select level"]):
+		Menu.printScreen("helpFiles/"+"SelectLevel")
 	elif(currentScene == sceneId["level"]):
 		Menu.printScreen("helpFiles/"+"level")
 	else:
@@ -191,17 +236,63 @@ def onHelpPressed():
 
 	return
 
+def onLevelSelected():
+	"""
+	Function called when a save is selected by the user 
+
+	@return: -
+	@rtype: void
+	"""
+	global saveName
+
+	selectedLevel = Button.getText(Menu.getButtonAt(menuList[2],Menu.getSelectedIndex(menuList[2])))
+	setSceneToLevel()
+	loadLevel(str(selectedLevel),saveName)
+
+	return
+
+def onSaveSelected():
+	"""
+	Function called when a save is selected by the user 
+
+	@return: -
+	@rtype: void
+	"""
+	global saveName
+
+	saveName = Button.getText(Menu.getButtonAt(menuList[1],Menu.getSelectedIndex(menuList[1])))
+
+	setSceneToSelectLevel()
+	
+	file = open("Saves/"+saveName+"/player.stats","r")
+	content = file.read()
+	file.close()
+	exec(content)
+
+	Menu.removeAllButtons(menuList[2])
+
+	xPos,yPos = 0,1
+	for i in range(0,maxLvlUnlocked+1):
+		if(str(i) in os.listdir("Levels")):
+			Menu.addButton(menuList[2],Button.Button(str(i),xPos,yPos,onLevelSelected))
+			yPos += 6
+			if(yPos >= 6*7+1):
+				yPos = 1
+				xPos += 9+len(str(i))
+
+	return
+
 def onNewGamePressed():
 	"""
 	Function called when user ask to create a new game
 	@return: -
 	@rtype: void
 	"""
-	global keyboard_default
+	global keyboard_default,menuList
 
 	maxNameLength = 50
 	
-	KeyBinder.restoreKbStgs(keyboard_default)
+	KeyBinder.restoreKbStgs(copy.deepcopy(keyboard_default))
 
 	name = ""
 	nameLength = 0
@@ -225,6 +316,17 @@ def onNewGamePressed():
 			Menu.printText("Cette sauvegarde existe deja ...")
 	
 	os.mkdir("Saves/"+name)
+	shutil.copyfile("baseFiles/player.stats","Saves/"+name+"/player.stats")
+
+	if(countSaves() == MAX_SAVES_NUMBER):
+		Menu.removeButton(menuList[1],"Nouvelle partie")
+
+	Menu.addButton(menuList[1],Button.Button(name,-1,5+(countSaves()-1)*SAVES_BUTTONS_SPACE,onSaveSelected,54))
+
+	if(countSaves() != MAX_SAVES_NUMBER):
+		Menu.setSelectedIndex(menuList[1],countSaves())
+	else:
+		Menu.setSelectedIndex(menuList[1],MAX_SAVES_NUMBER-1)
 
 	KeyBinder.initKbStgs()
 
@@ -232,12 +334,12 @@ def onNewGamePressed():
 
 def setSceneToStartMenu():
 	"""
-	Set current scene to the menu "Start Menu"
+	Set current scene to the menu "PyTry"
 	@return: -
 	@rtype: void
 	"""
 	global sceneId,currentScene
-	currentScene = sceneId["Start Menu"]
+	currentScene = sceneId["PyTry"]
 
 	return
 
@@ -252,6 +354,39 @@ def setSceneToSelectSave():
 
 	return
 
+def setSceneToSelectLevel():
+	"""
+	Set current scene to the menu "Select level"
+	@return: -
+	@rtype: void
+	"""
+	global sceneId,currentScene
+	currentScene = sceneId["Select level"]
+
+	return
+
+def setSceneToLevel():
+	"""
+	Set current scene to the real game, the \"level\"
+	@return: -
+	@rtype: void
+	"""
+	global sceneId,currentScene
+	currentScene = sceneId["level"]
+
+	return
+
+def countSaves():
+	"""
+	Count how many saves exists
+
+	@return: Number of existings saves
+	@rtype: int
+	"""
+	
+	count = len(os.listdir("Saves/"))
+
+	return count
 
 if(__name__ == "__main__"):
 	tmps1 = time.time()
