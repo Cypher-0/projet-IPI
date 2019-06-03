@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-#file containing definition of "Item" type : base for all object which will move
+"""
+File containing definition of type \"HUD\" used to defined user HUD in game
+"""
 
 from PyTry import *
 

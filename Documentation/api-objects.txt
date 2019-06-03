@@ -52,6 +52,7 @@ Level.movePlayerRight	Level-module.html#movePlayerRight
 Level.attributesList	Level-module.html#attributesList
 Level.getKeyBinder	Level-module.html#getKeyBinder
 Level.getPlayer	Level-module.html#getPlayer
+Level.delEnemyShot	Level-module.html#delEnemyShot
 Level.movePlayerUp	Level-module.html#movePlayerUp
 Player	Player-module.html
 Player.getShotSpeed	Player-module.html#getShotSpeed
