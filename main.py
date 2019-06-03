@@ -38,7 +38,7 @@ MAX_SAVES_NUMBER,SAVES_BUTTONS_SPACE = 5,8
 def init():
 	global dtShow,keyboard_default,kb_global
 
-	Tools.sysExec("python2.7 initTerm.py") #init terminal size
+	Tools.resizeTerminal(Object.SCREEN_WIDTH,Object.SCREEN_HEIGHT)
 
 	keyboard_default = KeyBinder.initKbStgs()
 
@@ -221,8 +221,30 @@ def loadLevel(name,currentSave):
 	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'Q',quit) #Add quit action to keybinder
 	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'?',onHelpPressed) #Add help action to keybinder
 
-	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',setSceneToSelectLevel) #ESC is the key to go back in menus
+	KeyBinder.addAction(Level.getKeyBinder(currentLevel),'ESC',quitLevel) #ESC is the key to go back in menus
 
+
+	return
+
+def quitLevel():
+	"""
+	Function called when user ask to quit level played to level selection menu
+
+	@return: -
+	@rtype: void
+	"""
+
+	Tools.sysExec("clear")
+	sys.stdout.write("\033[38;2;180;20;20;1m")
+	Menu.printScreen("Pictures/confirmQuitLevel.pic")
+	print("")
+	key = ""
+	while(key != "o" and key != "n"):
+		key = KeyBinder.waitForKeyPressed()
+	if(key == "n"):
+		return
+
+	setSceneToSelectLevel()
 
 	return
 
