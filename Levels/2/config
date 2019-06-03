@@ -1,0 +1,3 @@
+scoreObjective = 400
+maxEnemysNumber = 3
+availableEnemys = ["basic","drone","copter"]

@@ -1,0 +1,13 @@
+fireTimeSpace = 1
+shotSpeed = -150
+life = 10
+scoreValue = 25
+damageValue = 30
+startX = 168
+startY = randint(3,35)
+moveAmp = float(randint(2,12))
+moveFunction = None
+vX = -100
+vY = 0
+aX = 0
+aY = 0
