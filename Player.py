@@ -7,8 +7,9 @@ import Shot
 
 import time
 import sys
+import os
 
-attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","maxLife","immuteTime","lastDmgTime","isImmute","damageValue"]#+item
+attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","maxLife","immuteTime","lastDmgTime","isImmute","damageValue","playerName"]#+item
 #fireTimeSpace : float : time between 2 shots
 #lastShot : float : time corresponding to last shot done
 #shotList : list of objects of type "Shots" : all shots fired from the player. Each one is erase if it's out of the screen
@@ -21,6 +22,7 @@ attributesList = ["fireTimeSpace","lastShot","shotList","shotSpeed","life","maxL
 #lastDmgTime : float : player last damage time, used to calculate immunity time
 #isImmute : bool : can the player take damage ?
 #damageValue : float : how much damage per shot
+#playerName : str : save name of current player
 
 """
 \"Player\" type attributes list
@@ -38,7 +40,7 @@ dt = Object.dt
 
 playerColor = [255,0,0]
 
-def Player(datas,x,y,fireTimeSpace,maxLife = 200):
+def Player(datas,x,y,fireTimeSpace,maxLife,playerName):
 	"""
 	\"Player\" type constructor
 
@@ -54,9 +56,17 @@ def Player(datas,x,y,fireTimeSpace,maxLife = 200):
 	@param fireTimeSpace: time between two shots fire
 	@type fireTimeSpace: float
 
+	@param playerName: Save name of the player. Used to know where to save player stats.
+	@type playerName: str
+
 	@return: Dictionnary containing all informations about player
 	@rtype: dict
 	"""
+
+	assert type(fireTimeSpace) is float or int,"Current type is : %r, expected is : %r"%(type(fireTimeSpace),"float or int")
+	assert type(maxLife) is float or int,"Current type is : %r, expected is : %r"%(type(maxLife),"float or int")
+	assert type(playerName) is str,"Current type is : %r, expected is : %r"%(type(playerName),"str")
+
 	object = Item.Item(datas,x,y,playerColor)
 	object["fireTimeSpace"] = fireTimeSpace
 	object["lastShot"] = 0
@@ -64,6 +74,7 @@ def Player(datas,x,y,fireTimeSpace,maxLife = 200):
 	object["shotSpeed"] = 50
 	object["life"] = maxLife
 	object["maxLife"] = maxLife
+	object["playerName"] = playerName
 
 	object["immuteTime"] = 1
 	object["lastDmgTime"] = 0
@@ -190,6 +201,47 @@ def show(player):
 
 	return
 
+def writePlayerStats(player,maxLvlUnlocked = None,addLvl = 0):
+	"""
+	Write player's stats in his stats file.
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param maxLvlUnlocked: Max unlocked level by the player.| If == None, it will not change | if == -1, maxLvlUnlocked will be incremented of \"addLvl\" from current player's maxLvlUnlocked
+	@type maxLvlUnlocked: int
+
+	@param addLvl: how many more levels the players should have access now  
+	@type addLvl: int
+
+	@return: 1 if file not found | 0 otherwise
+	@rtype: void
+	"""
+	assertPlayer(player)
+	assert maxLvlUnlocked == None or type(maxLvlUnlocked) is int,"Current type is : %r, expected is : %r"%(type(maxLvlUnlocked),"int")
+
+	if(not(os.path.isfile("Saves/"+player["playerName"]+"/player.stats"))): #if file not found
+		return
+
+	if(maxLvlUnlocked == None):
+		tmpMax = getMaxLvlUnlocked(player)
+		maxLvlUnlocked = tmpMax if(tmpMax != -1) else 0
+	elif(maxLvlUnlocked == -1):
+		maxLvlUnlocked = getMaxLvlUnlocked(player)+1
+
+	text = "fireTimeSpace = "+str(player["fireTimeSpace"])+"\n"
+	text += "shotSpeed = "+str(player["shotSpeed"])+"\n"
+	text += "life = "+str(player["maxLife"])+"\n"
+	text += "damageValue = "+str(player["damageValue"])+"\n"
+	text += "maxLvlUnlocked = "+str(maxLvlUnlocked)+"\n"
+
+
+	file = open("Saves/"+player["playerName"]+"/player.stats","w")
+	file.write(text)
+	file.close()
+
+
+	return 0
+
 
 ##########################
 #
@@ -216,8 +268,8 @@ def getShotSpeed(player):
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
-	@return: -
-	@rtype: void
+	@return: content of \"shotSpeed\" key from \"player\"
+	@rtype: float
 	"""
 	assertPlayer(player)
 
@@ -255,8 +307,8 @@ def getShotList(player):
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
-	@return: -
-	@rtype: void
+	@return: content of \"shotList\" key from \"player\"
+	@rtype: list
 	"""
 	assertPlayer(player)
 
@@ -268,12 +320,59 @@ def getDamageValue(player,):
 	@param player: Dictionnary containing all information about one \"Player\" object
 	@type player: dict
 
-	@return: -
-	@rtype: void
+	@return: content of \"damageValue\" key from \"player\"
+	@rtype: float
 	"""
 	assertPlayer(player)
 
 	return player["damageValue"]
+
+
+def getPlayerName(player):
+	"""
+	Get content of \"playerName\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: content of \"playerName\" key from \"player\"
+	@rtype: str
+	"""
+	assertPlayer(player)
+
+	return player["playerName"]
+
+def getMaxLvlUnlocked(player):
+	"""
+	Get how many levels the player unlocked
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@return: max level unlocked by the player | -1 if player's save not found or maxLvlUnlocked parameter not found
+	@rtype: int
+	"""
+	assertPlayer(player)
+
+	maxLvlUnlocked = 0
+
+	if(not(os.path.isfile("Saves/"+player["playerName"]+"/player.stats"))): #if file not found
+		return -1
+
+	file = open("Saves/"+player["playerName"]+"/player.stats","r")
+	content = file.read()
+	file.close()
+
+	#search maxLvlUnlocked in existing file
+	if(content.find("maxLvlUnlocked") != -1):
+		content = content[content.find("maxLvlUnlocked"):]
+		content = content.replace(" ","")
+		content = content.replace("\n","")
+		content = content.replace("\r","")
+		tmpList = content.split("=")
+		maxLvlUnlocked = int(tmpList[1]) if(len(tmpList) == 2) else 0
+	else:
+		return -1
+
+	return maxLvlUnlocked
 
 
 ##########################
@@ -380,3 +479,20 @@ def setDamageValue(player,value):
 	player["damageValue"] = float(value)
 
 	return
+
+def setPlayerName(player,playerName):
+	"""
+	Set content of \"playerName\" key from \"player\"
+	@param player: Dictionnary containing all information about one \"Player\" object
+	@type player: dict
+
+	@param playerName: New value for content of \"playerName\" key from \"player\"
+	@type playerName: str
+
+	@return: -
+	@rtype: void
+	"""
+	assertPlayer(player)
+	assert type(playerName) is str,"Current type is : %r, expected is : %r"%(type(playerName),"str")
+
+	player["playerName"] = playerName

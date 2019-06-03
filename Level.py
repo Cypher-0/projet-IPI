@@ -60,7 +60,7 @@ def Level(levelName,saveName):
 
 	lsFiles = os.listdir("Levels/"+levelName)
 	assert "background.pic" in lsFiles, "Load level from %r failed : missing file : background.pic" % levelName
-	#assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % levelName
+	assert "foreground.pic" in lsFiles, "Load level from %r failed : missing file : foreground.pic" % levelName
 
 	bgItem0 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/background.pic",True),0,0,[70,70,70],fgSpeed+30)
 	bgItem1 = Item.Item(Tools.createDatasFromPic("Levels/"+levelName+"/background.pic",True),Item.getBaseWidth(bgItem0),0,[70,70,70],fgSpeed+30)
@@ -95,6 +95,7 @@ def Level(levelName,saveName):
 	hud = HUD.HUD(scoreObjective,Player.getMaxLife(playerItem))
 	object["HUD"] = hud
 
+	#print start screen
 	Tools.sysExec("clear")
 	startText = "\033[18;"+str(int(round((Object.SCREEN_WIDTH/2)+(len(str(scoreObjective))/2))))+"H\033[4;1m\033[38;2;200;0;0m"+str(scoreObjective)+"\033[0m"
 	Menu.printScreen("Pictures/startLevelScreen.pic",110)
@@ -338,7 +339,7 @@ def loadPlayer(saveName):
 
 	exec(content)
 
-	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5,life)
+	playerItem = Player.Player(Tools.createDatasFromPic("Pictures/player.pic"),0,21,0.5,life,saveName)
 	
 	Player.setFireTimeSpace(playerItem,fireTimeSpace)
 	Player.setShotSpeed(playerItem,shotSpeed)
@@ -445,6 +446,7 @@ def delPlayerShot(lvl,shot):
 	ls = Player.getShotList(lvl["playerItem"])
 	if(shot in ls):
 		ls.remove(shot)
+	Tools.prDly(len(ls),0.2)
 
 	return
 

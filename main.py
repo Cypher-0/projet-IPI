@@ -2,6 +2,7 @@
 
 from PyTry import *
 import Level
+import Player
 
 import time
 import sys
@@ -51,6 +52,7 @@ def init():
 	Menu.addButton(menuList[0],Button.Button("START",-1,5,setSceneToSelectSave,40))
 	Menu.addButton(menuList[0],Button.Button("AIDE ",-1,17,onHelpPressed,40))
 	Menu.addButton(menuList[0],Button.Button("Quitter",-1,29,quit,40))
+	KeyBinder.addAction(Menu.getKeyBinder(menuList[0]),'ESC',quit) #ESC is the key to go back in menus
 
 	#Select save menu
 	menuList.append(Menu.Menu("Select save"))
@@ -118,17 +120,8 @@ def live():
 			if(lvlState != 0):
 				setSceneToSelectLevel()
 				if(lvlState == 2):#if player win
-					file = open("Saves/"+saveName+"/player.stats","r")
-					content = file.read()
-					file.close()
-					exec(content)
-					#search and replace maxLvlUnlocked
-					if(maxLvlUnlocked == int(Level.getLevelName(currentLevel))):
-						content = content[0:content.find("maxLvlUnlocked")+len("maxLvlUnlocked")]+" = "
-						content += str(int(Level.getLevelName(currentLevel))+1)
-						file = open("Saves/"+saveName+"/player.stats","w")
-						file.write(content)
-						file.close()
+					if(int(Level.getLevelName(currentLevel))+1 > Player.getMaxLvlUnlocked(Level.getPlayer(currentLevel))):
+						Player.writePlayerStats(Level.getPlayer(currentLevel),int(Level.getLevelName(currentLevel))+1)
 
 				#reload level selection menu
 				onSaveSelected()
@@ -316,8 +309,7 @@ def onSaveSelected():
 			if(yPos >= 6*7+1):
 				yPos = 1
 				xPos += 9+len(str(i))
-	index = i if(i >= 0 and i <= maxLvlUnlocked) else 0
-	Menu.setSelectedIndex(menuList[2],index)
+	Menu.setSelectedIndex(menuList[2],Menu.getButtonsNumber(menuList[2])-1)
 
 	return
 
@@ -366,6 +358,8 @@ def onNewGamePressed():
 
 	Menu.addButton(menuList[1],Button.Button(name,-1,5+(countSaves()-1)*SAVES_BUTTONS_SPACE,onSaveSelected,54))
 
+	reOrganizeSaveButtons()
+
 	if(countSaves() != MAX_SAVES_NUMBER):
 		Menu.setSelectedIndex(menuList[1],countSaves())
 	else:
@@ -388,7 +382,7 @@ def onDelSavePressed():
 	if(buttonText != "Nouvelle partie"):
 		Tools.sysExec("clear")
 		Menu.printScreen("Pictures/comfirmDeleteSave.pic")
-		sys.stdout.write("\033[16;60H"+'\033[53;4;1m\033[38;2;200;0;0m'+buttonText)
+		sys.stdout.write("\033[16;"+str(int(round((Object.SCREEN_WIDTH/2)-(len(str(buttonText))/2))))+"H"+'\033[53;4;1m\033[38;2;200;0;0m'+buttonText)
 		print("")
 		key = ""
 		while(key != "o" and key != "n"):
@@ -398,14 +392,33 @@ def onDelSavePressed():
 
 			if(countSaves() == MAX_SAVES_NUMBER):
 				Menu.addButton(menuList[1],Button.Button("Nouvelle partie",10,42,onNewGamePressed),0)
-
+			
 			shutil.rmtree("Saves/"+buttonText)
+
+			reOrganizeSaveButtons()
 
 			Menu.setSelectedIndex(menuList[1],0)
 			return
 
 		elif(key == "n"):
 			return
+
+	return
+
+def reOrganizeSaveButtons():
+	"""
+	Re-organize all buttons of the level selection menu 
+
+	@return: -
+	@rtype: void
+	"""
+
+	saveButtonsPassed = 0 #how many buttons are already placed in the for
+	for i in range(0,Menu.getButtonsNumber(menuList[1])):
+		currentButton = Menu.getButtonAt(menuList[1],i)
+		if(Button.getText(currentButton) != "Nouvelle partie"):
+			Button.setPos(currentButton,-1,5+saveButtonsPassed*SAVES_BUTTONS_SPACE)
+			saveButtonsPassed += 1
 
 	return
 
@@ -465,10 +478,7 @@ def countSaves():
 
 	return count
 
+
 if(__name__ == "__main__"):
-	tmps1 = time.time()
 	
 	main()
-
-	tmps2=time.time()-tmps1
-	print(tmps2)

@@ -292,6 +292,19 @@ def getKeyBinder(menu):
 
 	return menu["keyBinder"]
 
+def getButtonsNumber(menu):
+	"""
+	Return how many buttons the menu have
+	@param menu: Dictionnary containing all information about one Menu object
+	@type menu: dict
+
+	@return: how many buttons the menu have
+	@rtype: int
+	"""
+	assertMenu(menu)
+
+	return len(menu["buttonList"])
+
 
 
 ##########################

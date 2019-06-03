@@ -314,3 +314,27 @@ def setUnselectedColor(button,color):
 	button["unselectedColor"] = color
 
 	return
+
+def setPos(button,x,y):
+	"""
+	Set \"x\" and \"y\" attribute value of button \"button\"
+	@param button: object of type \"Button\"
+	@type button: dict
+
+	@param x: new value for key \"x\" of \"button\" | if == -1, button will be centered automatically
+	@type x: float
+
+	@param y: new value for key \"y\" of \"button\" | if == -1, button will be centered automatically
+	@type y: float
+
+	@return: -
+	@rtype: void
+	"""
+	assertButton(button)
+
+	x = x if(x != -1) else (Object.SCREEN_WIDTH/2)-(button["width"]/2)
+	y = y if(y != -1) else (Object.SCREEN_HEIGHT/2)-(button["height"]/2)
+
+	Object.setPosition(button,x,y)
+
+	return
