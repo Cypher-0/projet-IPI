@@ -316,6 +316,8 @@ def onSaveSelected():
 			if(yPos >= 6*7+1):
 				yPos = 1
 				xPos += 9+len(str(i))
+	index = i if(i >= 0 and i <= maxLvlUnlocked) else 0
+	Menu.setSelectedIndex(menuList[2],index)
 
 	return
 

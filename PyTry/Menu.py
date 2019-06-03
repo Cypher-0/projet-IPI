@@ -83,8 +83,10 @@ def interact(menu): #main function which is managing keyboard events for the men
 	assertMenu(menu)
 	#set buttons state
 	if(len(menu["buttonList"]) > 0):
-		Button.setState(menu["buttonList"][menu["lastIndex"]],0)
-		Button.setState(menu["buttonList"][menu["currentIndex"]],1)
+		if(menu["lastIndex"] in range(0,len(menu["buttonList"]))):
+			Button.setState(menu["buttonList"][menu["lastIndex"]],0)
+		if(menu["currentIndex"] in range(0,len(menu["buttonList"]))):
+			Button.setState(menu["buttonList"][menu["currentIndex"]],1)
 
 	KeyBinder.interact(menu["keyBinder"])
 
