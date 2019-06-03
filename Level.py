@@ -95,6 +95,13 @@ def Level(levelName,saveName):
 	hud = HUD.HUD(scoreObjective,Player.getMaxLife(playerItem))
 	object["HUD"] = hud
 
+	Tools.sysExec("clear")
+	startText = "\033[18;"+str(int(round((Object.SCREEN_WIDTH/2)+(len(str(scoreObjective))/2))))+"H\033[4;1m\033[38;2;200;0;0m"+str(scoreObjective)+"\033[0m"
+	Menu.printScreen("Pictures/startLevelScreen.pic",110)
+	sys.stdout.write(startText)
+	print("")
+	KeyBinder.waitForKeyPressed()
+
 	for i in range(0,maxEnemysNumber):
 		addEnemy(object)
 
@@ -243,7 +250,8 @@ def interact(lvl):
 		for j in lvl["enemyList"]:
 			if(Item.tryCollide(i,j)):
 					Enemy.takeDamage(j,Player.getDamageValue(lvl["playerItem"]))
-					delPlayerShot(lvl,i)
+					if(Enemy.getIsDead(j) == False): #if enemy is not dead, del shot
+						delPlayerShot(lvl,i)
 					#if enemy destroyed
 					if(Enemy.getLife(j) == 0):
 						addPlayerScore(lvl,Enemy.getScoreValue(j))
@@ -256,13 +264,14 @@ def interact(lvl):
 		for i in Enemy.getShotList(j):
 			#enemys shots and foreground
 			if(Item.tryCollide(lvl["fgItem0"],i) or Item.tryCollide(lvl["fgItem1"],i)):
-				Enemy.getShotList(j).remove(i)
+				delEnemyShot(j,i)
 			#enemys shots and player
 			if(Item.tryCollide(i,lvl["playerItem"])):
 				Player.takeDamage(lvl["playerItem"],Enemy.getDamageValue(j))
-				Enemy.getShotList(j).remove(i)
+				delEnemyShot(j,i)
 
 	HUD.refreshValues(lvl["HUD"],Player.getLife(lvl["playerItem"]),lvl["playerScore"])
+
 
 	return 0
 
@@ -434,6 +443,26 @@ def delPlayerShot(lvl,shot):
 	@rtype: void
 	"""
 	ls = Player.getShotList(lvl["playerItem"])
+	if(shot in ls):
+		ls.remove(shot)
+
+	return
+
+def delEnemyShot(enemy,shot):
+	"""
+	PRIVATE FUNCTION
+	Private function to securise player's shots delete
+
+	@param enemy: Dictionnary containing all information about one \"Enemy\" object
+	@type enemy: dict
+
+	@param shot: Dictionnary containing all information about one \"Shot\" object
+	@type shot: dict
+
+	@return: -
+	@rtype: void
+	"""
+	ls = Enemy.getShotList(enemy)
 	if(shot in ls):
 		ls.remove(shot)
 

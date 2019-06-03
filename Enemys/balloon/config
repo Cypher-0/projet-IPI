@@ -1,8 +1,8 @@
-fireTimeSpace = 1
+fireTimeSpace = 1.5
 shotSpeed = -20
 life = 40
 scoreValue = 30
-damageValue = 20
+damageValue = 17
 startX = startX
 startY = 15
 moveAmp = float(randint(5,10))

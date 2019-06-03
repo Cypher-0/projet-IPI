@@ -80,6 +80,16 @@ def init():
 def quit():
 	global keyboard_default
 
+	Tools.sysExec("clear")
+	sys.stdout.write("\033[38;2;180;20;20;1m")
+	Menu.printScreen("Pictures/confirmQuitGame.pic")
+	print("")
+	key = ""
+	while(key != "o" and key != "n"):
+		key = KeyBinder.waitForKeyPressed()
+	if(key == "n"):
+		return
+
 	sys.stdout.write('\033[2J')
 	sys.stdout.write("\033[38;2;255;255;255m") #text white color restoration
 	sys.stdout.write('\033[0m')

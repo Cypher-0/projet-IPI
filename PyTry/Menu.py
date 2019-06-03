@@ -362,6 +362,10 @@ def printScreen(filePath,vY = None,prePrintOption = ""):
 			Object.show(screenObject)
 			print("")
 			time.sleep(dt*2)
+		Tools.clearScreen()
+		Object.setPosition(screenObject,0,0)
+		Object.show(screenObject)
+		print("")
 	sys.stdout.write("\033[1;1H")
 
 	return

@@ -12,11 +12,11 @@
 #                                                                 |  Si vous mourrez, vous perdez le niveau.                                                        #
 #  /#####\   /###\                                                |                                                                                                 #
 #  # Maj # + # , # Permet d'acceder a l'aide                      |  Vous ne pouvez pas tirer au travers du sol (couleur verte)                                     #
-#  \#####/   \###/                                                |  Si vous rentrez en collision avec celui-ci, vous prendrez beaucoup de degats                   #
-#_________________________________________________________________|                                                                                                 #
-#                                                                 |  Les differents types d'ennemis ont chacuns des caracteristiques differentes et n'auront pas    #
-#                   En jeu :                                      |  le meme effet.                                                                                 #
+#  \#####/   \###/                                                |  Si vous rentrez en collision avec celui-ci, vous prendrez beaucoup de degats et une immunite   #
+#_________________________________________________________________|  de 3s vous sera donnee (tant que votre personnage clignote)                                    #
 #                                                                 |                                                                                                 #
+#                   En jeu :                                      |  Les differents types d'ennemis ont chacuns des caracteristiques differentes et n'auront pas    #
+#                                                                 |  le meme effet.                                                                                 #
 #           Deplacements du joueur :                              |                                                                                                 #
 #                                                                 |                                                                                                 #
 #                   Monter                                        |                                                                                                 #
