@@ -446,7 +446,6 @@ def delPlayerShot(lvl,shot):
 	ls = Player.getShotList(lvl["playerItem"])
 	if(shot in ls):
 		ls.remove(shot)
-	Tools.prDly(len(ls),0.2)
 
 	return
 
