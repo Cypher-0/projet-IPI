@@ -1,0 +1,25 @@
+﻿Background décoratif
+Foreground avec obstacles : bâtiments, montagnes
+
+Ennemis : ballons, avions
+Cibles au sol : bâtiments, (batteries de tir ?)
+
+Vie du personnage : barre de vie (change de couleur avec le temps ?)
+
+Deux modes : Levels et infinis avvec autogénération ? Inifnie => difficultée croissante avec le temps
+
+\033[48;2;r;g;bm
+--> background color
+
+https://deusyss.developpez.com/tutoriels/Python/Epydoc/
+
+
+Document de conception : faire un document de contextualisation et la doc pour la partie programme
+
+------------------
+Projet : dimensions des images de background et foreground
+Utiliser le convertisseur https://www.ascii-art-generator.org
+Taille de l'image de base en pixel : 400x48
+Paramètres de la conversion : largeur : 800
+Remplacer tout les "M" par un " " afin d'obtenir le fond transparent dans le document récupéré.
+Utiliser notepad++ pour visualiser l'image.

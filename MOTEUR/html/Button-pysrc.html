@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Button</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;Button
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="Button-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="Button-module.html">Module Button</a></h1>
+<pre class="py-src">
+&#65279;# -*- coding: utf-8 -*-
+#this type inherit of Item type (Item.py) proprieties
+"""
+File containing definition of type \"Button\" used for things like menus
+"""
+
+import Tools
+import Object
+import Item
+
+import copy
+import sys
+
+attributesList = ["datas","x","y","width","height","color","vX","vY","aX","aY","sprites","text","bgColor","state","function"]
+#text : str : Button text
+#state : int : button state : 0 => normal; 1 => selected
+#bgColor : list : color list (rgb) corresponding to bg color when selected (only applied on frame) or pressed (applied everywhere)
+        #button background is object sprite[0]
+        #button frame is object sprite[1]
+        #button text is object sprite[2]
+#function : function : function associated to the button
+
+
+"""
+\"Button\" type attributes list
+@type: list
+"""
+
+##########################
+#
+#       Constructor
+#
+##########################
+
+def Button(txt,x,y,func = None,width = None,height = None):
+
+        """
+        \"Button\" type constructor
+        @param txt: Text displayed in the button
+        @type txt: str
+
+        @param x: Button x position on screen
+        @type x: float
+
+        @param y: Button y position on screen
+        @type y: float
+
+        @param func: Function associated to the Button
+        @type func: function
+        
+        @param width: Button width (num of characters) Automatically defined by text length
+        @type width: int
+
+        @param height: Button height (num of characters) Automatically defined by number of lines in "text"
+        @type height: int
+
+        @return: dictionnary containing all informations of created object
+        @rtype: dict
+        """
+
+        txt = str(txt)
+        assert type(width) is int or width == None
+        assert type(height) is int or height == None
+
+        maxLen = 0
+        tempList = txt.split('\n')
+        for i in range(0,len(tempList)):
+                if(maxLen < len(tempList[i])):
+                        maxLen = len(tempList[i])
+
+        if(width == None):
+                width = maxLen+4
+        else :
+                width = width
+        if(height == None):
+                height = len(tempList)+2
+        else :
+                height = height
+
+        dataBackground = []
+        dataFrame = []
+
+        tempList = []
+        #create empty background
+        for i in range(0,height):
+                tempList = []
+                for j in range(0,width):
+                        tempList.append(" ")
+                dataBackground.append(tempList)
+        dataBackground = copy.deepcopy(dataBackground)
+
+        tempList = []
+        #create frame
+        for i in range(0,height):
+                tempList2 = []
+                for j in range(0,width):
+                        if(i == 0 or i == height-1): #if on first line or last one
+                                tempList2.append('-')
+                        else:
+                                tempList2.append(' ')
+                tempList2[0] = '|' #change column 0
+                tempList2[width-1] = '|' #change last column
+                tempList.append(tempList2)
+        #replace angles
+        tempList[0][0] = '+'
+        tempList[0][width-1] = '+'
+        tempList[height-1][width-1] = '+'
+        tempList[height-1][0] = '+'
+
+
+        dataFrame = copy.deepcopy(tempList)
+
+        baseObject = Item.Item(dataBackground,x,y)
+        Item.addSprite(baseObject,dataFrame)
+
+        Item.addSprite(baseObject,[list(txt)])
+
+        baseObject["text"] = txt
+        baseObject["bgColor"] = [150,150,150]
+        baseObject["state"] = 0
+        baseObject["function"] = func
+
+        return baseObject
+
+##########################
+#
+#       Procedures
+#       
+##########################
+
+def assertButton(button):
+        """
+        Assert button is at least corresponding to \"Button\" type criterias
+        @param button: object to test
+        @type button: dict
+        @return: True if correct \"Button\" type. The procedure stop if it's not
+        @rtype: bool
+        """
+        assert type(button) is dict
+        for i in range(0,len(attributesList)):
+                assert attributesList[i] in button.keys(),"\"Button\" type expect %r key."%attributesList[i]
+
+        return True #return true if "object" is a correct "Button"
+
+def show(button):
+        """
+        Show button \"button\" on terminal screen
+        @param button: Dictionnary containing all information about one Button object
+        @type button: dict
+        @return: -
+        @rtype: void
+        """
+        Object.show(button,True)#print background
+
+        Item.setSprite(button,1)#select frame sprite
+        if(button["state"] == 1): #if button selected
+                sys.stdout.write('\033[48;2;'+str(button["bgColor"][0])+';'+str(button["bgColor"][1])+';'+str(button["bgColor"][2])+'m')
+        Object.show(button)#print selected sprite
+        sys.stdout.write('\033[0m') #reset color parameters
+
+        X = Object.getX(button)
+        Y = Object.getY(button)
+        Item.setSprite(button,2)#select text sprite
+        Object.setX(button,X+int(Item.getBaseWidth(button)/2)-len(button["text"])+2)#+int((Object.getWidth(button)-len(button["text"]))/2))
+        Object.setY(button,Y+int(Item.getBaseHeight(button)/2))
+        Object.show(button)
+        Object.setX(button,X)
+        Object.setY(button,Y)
+
+        Item.setSprite(button,0) #change item sprite to background
+
+        sys.stdout.write('\033[0m') #reset color parameters
+
+        button["state"] = 0
+
+        return
+
+##########################
+#
+#       Getters
+#
+##########################
+
+def getSate(button):
+        """
+        Get button \"state\" attribute value : 0-Unselected | 1-Selected
+        @param button: object of type \"Button\"
+        @type button: dict
+        @return: \"button\" state
+        @rtype: int
+        """
+        assertButton(button)
+
+        return button["state"]
+
+def getFunc(button):
+        """
+        Get button \"function\" attribute value : function to call on button activated
+        @param button: object of type \"Button\"
+        @type button: dict
+        @return: \"button\" linked function
+        @rtype: function
+        """
+        assertButton(button)
+        return button["function"]
+
+##########################
+#
+#       Setters
+#
+##########################
+
+def setState(button,state):
+        """
+        Set button \"state\" attribute value : 0-Unselected | 1-Selected
+        @param button: object of type \"Button\"
+        @type button: dict
+        @param state: new \"state\" attribute value of \"button\"
+        @type state: int
+        @return: -
+        @rtype: void
+        """
+        assertButton(button)
+
+        button["state"] = state
+        return
+<script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Sat Apr  6 11:04:56 2019
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

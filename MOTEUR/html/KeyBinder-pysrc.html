@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>KeyBinder</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;KeyBinder
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="KeyBinder-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="KeyBinder-module.html">Module KeyBinder</a></h1>
+<pre class="py-src">
+&#239;&#187;&#191;"""
+File containing definition of type "KeyBinder" used to link a key and a function
+"""
+#used to link keyboard event and functions
+
+import termios
+import select
+import tty
+import sys
+import time
+import copy
+
+import Tools
+
+attributesList = ["name","actionList"]
+#name : str : name of keybinder
+#actionList : list : list of actions existing in the keyBinder. This "type" is defined later in the file
+"""
+\"KeyBinder\" type attributes list
+@type: list
+"""
+
+##########################
+#
+#       Constructor
+#
+##########################
+
+#----- KeyBinder
+
+def KeyBinder(name):
+        """
+        \"KeyBinder\" type constructor
+        @param name: Name of the KeyBinder
+        @type name: str
+        @return: dictionnary containing all informations of created object
+        @rtype: dict
+        """
+        assert type(name) is str
+        return {"name":name,"actionList":[]}
+
+#----- Action
+
+def Action(key,function,param1 = None,param2 = None):
+        """
+        \"Action\" subtype constructor
+        @param key: keyboard key to link
+        @type key: str
+        @param function: Function to link to the key
+        @type function: function
+        @param param1: First parameter to pass to linked function
+        @type param1: Undefined
+        @param param2: Second parameter to pass to linked function
+        @type param2: Undefined
+        @return: dictionnary containing all informations of created subobject
+        @rtype: dict
+        """
+        assert type(key) is str
+        esc = '\x1b' #keyCode for all keys like UP,DOWN,LEFT,RIGHT,ESC
+
+        if(key == "ESC"):
+                key = esc
+
+        return {"key":key,"function":function,"param1":param1,"param2":param2}
+
+##########################
+#
+#       Procedures
+#
+##########################
+
+#----- KeyBinder
+
+def assertKeyBinder(kb):
+        """
+        Assert kb is at least corresponding to \"KeyBinder\" type criterias
+        @param kb: object to test
+        @type kb: dict
+        @return: True if correct \"KeyBinder\" type. The procedure stop if it's not
+        @rtype: bool
+        """
+        assert type(kb) is dict
+        for i in range(0,len(attributesList)):
+                assert attributesList[i] in kb.keys(),"\"KeyBinder\" type expect %r key."%attributesList[i]
+
+        return True #return true if "kb" is a correct "KeyBinder" object
+
+def isData():#is keyboard data availables
+        """
+        Test if keyboard data is available
+        @return: True if datas availables
+        @rtype: bool
+        """
+        return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+
+def interact(kb): #<<main>> function to call every loop for every KeyBinder object. Keys test are in it
+        """
+        MAIN function to call every loop for every KeyBinder object. It call every functions connected to every keys pressed
+        @param kb: \"KeyBinder\" object
+        @type kb: dict
+        @return: - 
+        @rtype: void
+        """
+        assertKeyBinder(kb) #PERFORMANCE  --> comment this line to increase performances (use carefully)
+
+        if((isData() == True)):
+                if(len(kb["actionList"])>0):
+                        c = sys.stdin.read(1)#type(c) is str
+                        for i in range(0,len(kb["actionList"])):
+                                if(c == kb["actionList"][i]["key"]):
+                                        if(not(kb["actionList"][i]["param1"] == None)):
+                                                if(not(kb["actionList"][i]["param2"] == None)):
+                                                        kb["actionList"][i]["function"](kb["actionList"][i]["param1"],kb["actionList"][i]["param2"])
+                                                else:
+                                                        kb["actionList"][i]["function"](kb["actionList"][i]["param1"])
+                                        else:
+                                                kb["actionList"][i]["function"]()
+                termios.tcflush(sys.stdin.fileno(),termios.TCIFLUSH)
+        
+        return
+
+
+def addAction(kb,key,function,param1 = None,param2 = None): #add an action to the actionList
+        """
+        Create a new connection between a function and a key
+        @param key: keyboard key to link
+        @type key: str
+        @param function: Function to link to the key
+        @type function: function
+        @param param1: First parameter to pass to linked function
+        @type param1: Undefined
+        @param param2: Second parameter to pass to linked function
+        @type param2: Undefined
+        @return: -
+        @rtype: void
+        """
+        assertKeyBinder(kb) #PERFORMANCE  --> comment this line to increase performances (use carefully)
+
+        kb["actionList"].append(Action(key,function,param1,param2))
+
+        return
+
+##########################
+#
+#       Getters
+#
+##########################
+
+#----- KeyBinder
+
+def getName(kb):
+        """
+        Get \"name\" attribute value of KeyBinder object \"kb\"
+        @param kb: object of type \"KeyBinder\"
+        @type kb: dict
+        @return: keyBinder name
+        @rtype: str
+        """
+        assertKeyBinder(kb) #PERFORMANCE  --> comment this line to increase performances (use carefully)
+        return kb["name"]
+
+##########################
+#
+#       Setters
+#
+##########################
+
+#----- KeyBinder
+
+def setName(kb,name):
+        """
+        Set \"name\" attribute value of KeyBinder object \"kb\"
+        @param kb: object of type \"KeyBinder\"
+        @type kb: dict
+        @param name: New value for \"name\" attribute of \"kb\"
+        @type name: str
+        @return: keyBinder name
+        @rtype: str
+        """
+        assert type(name) is str
+        assertKeyBinder(kb)
+        kb["name"] = name
+        return 0
+
+#################################################################
+#
+#       Independants procedures
+#
+#################################################################
+
+#this function have to be called at the beginning of the program
+def initKbStgs(): #return KeyBoard base Settings, to use in procedure restoreKbStgs at the end of the program
+        """
+        Initialize keyboard settings to be able to interact with user
+        @return: tty default settings (used to be restored at the end of the program)
+        @rtype: list
+        """
+        old_settings = termios.tcgetattr(sys.stdin)
+        tty.setcbreak(sys.stdin.fileno())#initiate keyboard
+        return copy.deepcopy(old_settings)
+
+#this function have to be called at the end of the program
+def restoreKbStgs(old_settings): #restore KeyBoard Settings
+        """
+        Restore default keyboard settings using the result of \"initKbStgs()\"
+        @param old_settings: result of \"initKbStgs()\" used at the beginning of the program. Parameters to restore.
+        @type old_settings: list
+        @return: -
+        @rtype: void
+        """
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+<script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Sat Apr  6 11:04:56 2019
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

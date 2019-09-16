@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #resize the terminal before start the game
-from PyTry import Tools
+import Tools
 
 SCREEN_WIDTH = 166
 SCREEN_HEIGHT = 48
